@@ -1,4 +1,7 @@
 import { Fraunces, Plus_Jakarta_Sans } from 'next/font/google';
+import Script from 'next/script';
+import { PartSwitcher } from '@/components/part-switcher/PartSwitcher';
+import { THEME_INIT_SCRIPT } from '@/lib/theme';
 import './globals.css';
 
 const jakarta = Plus_Jakarta_Sans({
@@ -34,8 +37,15 @@ export const viewport = {
 /** @param {{ children: React.ReactNode }} props */
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${jakarta.variable} ${fraunces.variable}`}>
-      <body>{children}</body>
+    // suppressHydrationWarning: the theme script sets data-theme before React hydrates.
+    <html lang="en" className={`${jakarta.variable} ${fraunces.variable}`} suppressHydrationWarning>
+      <body>
+        <Script id="theme-init" strategy="beforeInteractive">
+          {THEME_INIT_SCRIPT}
+        </Script>
+        {children}
+        <PartSwitcher />
+      </body>
     </html>
   );
 }
