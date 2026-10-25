@@ -9,13 +9,17 @@ const PARTS = [
   { href: '/studio', label: 'B · Studio' },
 ];
 
-/** Lets reviewers hop between the two assessment parts. */
+/**
+ * Lets reviewers hop between the two assessment parts. Floats bottom-left on desktop;
+ * on smaller screens it sits at the end of the page so it never covers content or the
+ * phone dock.
+ */
 export function PartSwitcher() {
   const pathname = usePathname();
   return (
     <nav
       aria-label="Assessment parts"
-      className="fixed bottom-4 left-4 z-50 flex rounded-full border border-line bg-surface/90 p-1 text-xs shadow-md backdrop-blur max-lg:hidden"
+      className="fixed bottom-4 left-4 z-50 flex rounded-full border border-line bg-surface/90 p-1 text-xs shadow-md backdrop-blur max-lg:static max-lg:mx-auto max-lg:mt-2 max-lg:mb-8 max-lg:w-fit max-md:mb-40"
     >
       {PARTS.map((part) => {
         const current = part.href === pathname;
