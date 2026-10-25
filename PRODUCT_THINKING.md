@@ -51,6 +51,7 @@ Branching. Pick an image, change one thing, and you get a new set right next to 
 - **Simplified:** one branch generates at a time. No queue to manage.
 - **Removed:** a separate history page in the studio. The branches already are the history.
 - **Part A changes from the mockup:**
+  - Empty canvas puts the prompt in the middle. After the first result it slides into the side panel, so you end up in the mockup layout
   - Main area shows only your current work. Old runs stay in the history strip at the top, so nothing shows twice
   - Generate button colour made darker, the original was hard to read
   - Nav highlight follows Image or Video
