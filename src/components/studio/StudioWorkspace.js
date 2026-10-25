@@ -19,6 +19,7 @@ import { LineageCanvas } from './LineageCanvas';
 import { StudioHeader } from './StudioHeader';
 import { useBranching } from './useBranching';
 import { useStudio } from './useStudio';
+import { useStudioCommands } from './useStudioCommands';
 
 /** @import { StudioProject } from '@/lib/studio/types' */
 /** @import { TileAction } from '@/components/shared/MediaTile' */
@@ -26,6 +27,8 @@ import { useStudio } from './useStudio';
 
 const MediaLightbox = dynamic(() => import('@/components/shared/MediaLightbox'));
 const CompareView = dynamic(() => import('./CompareView'));
+const CommandPalette = dynamic(() => import('@/components/ui/CommandPalette'));
+const ShortcutsSheet = dynamic(() => import('./ShortcutsSheet'));
 const NO_UPSCALES = new Set(/** @type {string[]} */ ([]));
 
 /**
@@ -46,6 +49,9 @@ function Studio({ project }) {
   const { state, dispatch, view, imageIndex } = useStudio(project);
   const [viewerOpen, setViewerOpen] = useState(false);
   const [compareOpen, setCompareOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const overlayOpen = viewerOpen || compareOpen || paletteOpen || shortcutsOpen;
   const branching = useBranching({ state, dispatch, direction: view.direction });
   const layout = useMemo(() => layoutLineage(view), [view]);
 
@@ -85,6 +91,33 @@ function Studio({ project }) {
     toast(`Exported ${state.picks.size} selects with their recipes`, { tone: 'success' });
   };
 
+  const commands = useStudioCommands({
+    state,
+    view,
+    takeLabel,
+    canCompare,
+    handlers: {
+      select: (imageId) => dispatch({ type: 'select', id: imageId }),
+      togglePick: (imageId) => dispatch({ type: 'togglePick', id: imageId }),
+      toggleReject: (imageId) => dispatch({ type: 'toggleReject', id: imageId }),
+      toggleCompare: (imageId) => dispatch({ type: 'toggleCompare', id: imageId }),
+      openCompare: () => setCompareOpen(true),
+      focusBranch: () => document.getElementById(BRANCH_INPUT_ID)?.focus(),
+      reroll: () =>
+        selected &&
+        selectedItem &&
+        branching.branch({
+          source: selected.take,
+          sourceImageId: selectedItem.id,
+          changes: {},
+          placement: 'continue',
+        }),
+      openViewer: () => setViewerOpen(true),
+      exportSelects,
+      showShortcuts: () => setShortcutsOpen(true),
+    },
+  });
+
   const select = useCallback(
     /** @param {string} id */ (id) => dispatch({ type: 'select', id }),
     [dispatch],
@@ -116,8 +149,10 @@ function Studio({ project }) {
       enter: () => id && setViewerOpen(true),
       b: () => document.getElementById(BRANCH_INPUT_ID)?.focus(),
       'shift+c': () => canCompare && setCompareOpen(true),
+      'mod+k': () => setPaletteOpen(true),
+      'shift+?': () => setShortcutsOpen(true),
     },
-    { enabled: !viewerOpen && !compareOpen },
+    { enabled: !overlayOpen },
   );
 
   /** @param {TileAction} action @param {Generation} item */
@@ -130,7 +165,11 @@ function Studio({ project }) {
   return (
     <div className="mx-auto flex max-w-[110rem] flex-col gap-4 px-4 pb-6 md:px-6 lg:h-dvh lg:px-8">
       <TopBar nav={<PrimaryNav activeId="projects" />} />
-      <StudioHeader project={view} />
+      <StudioHeader
+        project={view}
+        onOpenCommands={() => setPaletteOpen(true)}
+        onOpenShortcuts={() => setShortcutsOpen(true)}
+      />
       <DirectionBar direction={view.direction} />
 
       <div className="grid min-h-0 flex-1 gap-4 lg:grid-cols-[minmax(0,1fr)_22rem]">
@@ -195,6 +234,18 @@ function Studio({ project }) {
         )}
       </div>
 
+      <Suspense fallback={null}>
+        {paletteOpen && (
+          <CommandPalette
+            commands={commands}
+            onClose={() => setPaletteOpen(false)}
+            placeholder="Search actions, takes and branches…"
+          />
+        )}
+      </Suspense>
+      <Suspense fallback={null}>
+        {shortcutsOpen && <ShortcutsSheet onClose={() => setShortcutsOpen(false)} />}
+      </Suspense>
       <Suspense fallback={null}>
         {compareOpen && canCompare && (
           <CompareView
