@@ -42,6 +42,8 @@ function matches(combo, event, apple) {
 export function useHotkeys(bindings, { enabled = true } = {}) {
   const onKeyDown = useEffectEvent(
     /** @param {KeyboardEvent} event */ (event) => {
+      // A focused widget (listbox, radio group…) already handled this key.
+      if (event.defaultPrevented) return;
       const apple = isApplePlatform();
       for (const [combo, handler] of Object.entries(bindings)) {
         if (!matches(combo, event, apple)) continue;
