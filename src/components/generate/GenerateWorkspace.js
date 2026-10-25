@@ -42,15 +42,12 @@ function Workspace({ initialHistory, initialFeedSize }) {
   const [historyOpen, setHistoryOpen] = useState(false);
   /** @type {React.RefObject<HTMLElement | null>} */
   const feedRef = useRef(null);
-  /** @type {React.RefObject<HTMLTextAreaElement | null>} */
-  const textareaRef = useRef(null);
 
   const actions = useWorkspaceActions({
     composer,
     feed,
     history,
     feedRef,
-    textareaRef,
     overlayOpen: viewerItemId !== null || historyOpen,
   });
 
@@ -88,7 +85,6 @@ function Workspace({ initialHistory, initialFeedSize }) {
             buttonState={actions.buttonState}
             onGenerate={actions.generateFromComposer}
             onCancel={actions.cancel}
-            textareaRef={textareaRef}
             className="lg:mt-30 lg:mb-6 lg:overflow-y-auto"
           />
 

@@ -6,6 +6,7 @@ import { useGenerate } from '@/hooks/useGenerate';
 import { useHotkeys } from '@/hooks/useHotkeys';
 import { DEFAULT_REQUEST } from '@/lib/constants';
 import { downloadGeneration } from '@/lib/download';
+import { focusVisiblePrompt } from './PromptTextarea';
 
 /** @import { Batch, GenerateRequest, Generation } from '@/lib/types' */
 /** @import { ComposerSettings } from '@/hooks/useComposerSettings' */
@@ -30,18 +31,10 @@ function describeRun({ mode, count }) {
  *   feed: ReturnType<typeof import('@/hooks/useCanvasFeed').useCanvasFeed>,
  *   history: ReturnType<typeof import('@/hooks/useHistory').useHistory>,
  *   feedRef: React.RefObject<HTMLElement | null>,
- *   textareaRef: React.RefObject<HTMLTextAreaElement | null>,
  *   overlayOpen: boolean,
  * }} params
  */
-export function useWorkspaceActions({
-  composer,
-  feed,
-  history,
-  feedRef,
-  textareaRef,
-  overlayOpen,
-}) {
+export function useWorkspaceActions({ composer, feed, history, feedRef, overlayOpen }) {
   const toast = useToast();
   const { state: generation, generate, cancel: cancelGeneration, dismissError } = useGenerate();
   const [announcement, setAnnouncement] = useState('');
@@ -157,18 +150,18 @@ export function useWorkspaceActions({
         style: batch.style,
         advanced: batch.advanced,
       });
-      textareaRef.current?.focus();
+      focusVisiblePrompt();
       toast('Prompt and settings loaded');
     },
-    [loadComposer, textareaRef, toast],
+    [loadComposer, toast],
   );
 
   const pickPrompt = useCallback(
     /** @param {string} prompt */ (prompt) => {
       loadComposer({ prompt });
-      textareaRef.current?.focus();
+      focusVisiblePrompt();
     },
-    [loadComposer, textareaRef],
+    [loadComposer],
   );
 
   /** @type {GenerateButtonState} */
