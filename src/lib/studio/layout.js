@@ -9,6 +9,7 @@
  */
 export const LAYOUT = {
   laneHeaderWidth: 200,
+  compactLaneHeaderWidth: 40,
   thumbSize: 84,
   cardWidth: 384,
   cardHeight: 168,
@@ -38,9 +39,10 @@ export const LAYOUT = {
 
 /**
  * @param {StudioProject} project
+ * @param {{ laneHeaderWidth?: number }} [options]  narrower lane names on phones
  */
-export function layoutLineage(project) {
-  const { laneHeaderWidth, cardWidth, cardHeight, columnWidth, laneHeight, padding } = LAYOUT;
+export function layoutLineage(project, { laneHeaderWidth = LAYOUT.laneHeaderWidth } = {}) {
+  const { cardWidth, cardHeight, columnWidth, laneHeight, padding } = LAYOUT;
   const rowOf = new Map(project.branches.map((branch, index) => [branch.id, index]));
   const hueOf = new Map(project.branches.map((branch) => [branch.id, branch.hue]));
 
@@ -86,6 +88,7 @@ export function layoutLineage(project) {
 
   const columns = Math.max(0, ...[...boxes.values()].map((box) => box.column)) + 1;
   return {
+    laneHeaderWidth,
     boxes,
     connectors,
     width: laneHeaderWidth + padding * 2 + columns * columnWidth - (columnWidth - cardWidth),

@@ -79,10 +79,11 @@ export function LineageCanvas({
       const scroller = scrollerRef.current;
       const element = scroller?.querySelector(selector);
       if (scroller && element)
-        revealWithin(scroller, element, { left: LAYOUT.laneHeaderWidth + 16 });
+        revealWithin(scroller, element, { left: layout.laneHeaderWidth + 16 });
     },
-    [],
+    [layout.laneHeaderWidth],
   );
+  const compact = layout.laneHeaderWidth < LAYOUT.laneHeaderWidth;
 
   // Bring a new take into view the moment it starts generating.
   const pendingTakeId = pending?.take.id;
@@ -120,23 +121,35 @@ export function LineageCanvas({
                 className={cn(
                   styles.laneHeader,
                   branch.id === pending?.newBranch?.id && 'animate-fade-in',
-                  'flex flex-col justify-center gap-1 border-b border-line/60 pr-8 pl-5 last:border-b-0',
+                  'flex flex-col justify-center gap-1 border-b border-line/60 last:border-b-0',
+                  compact ? 'items-center' : 'pr-8 pl-5',
                 )}
-                style={{ width: LAYOUT.laneHeaderWidth, height: LAYOUT.laneHeight }}
+                style={{ width: layout.laneHeaderWidth, height: LAYOUT.laneHeight }}
               >
-                <span className="flex items-center gap-2 text-sm font-semibold text-ink-900">
+                {/* Phones: just the lane colour; the name stays for screen readers. */}
+                <span
+                  className={cn(
+                    'flex items-center gap-2 text-sm font-semibold text-ink-900',
+                    compact && '[&>span:last-child]:sr-only',
+                  )}
+                >
                   <span
                     aria-hidden="true"
                     className="size-2.5 shrink-0 rounded-full"
                     style={{ backgroundColor: `var(--color-lane-${branch.hue})` }}
                   />
-                  {branch.name}
+                  <span>{branch.name}</span>
                 </span>
-                <span className="pl-4.5 text-xs text-ink-500">
+                <span className={cn('pl-4.5 text-xs text-ink-500', compact && 'sr-only')}>
                   {takes.length} {takes.length === 1 ? 'take' : 'takes'}
                 </span>
                 {origin && (
-                  <span className="flex items-center gap-1 pl-4.5 text-xs text-ink-500">
+                  <span
+                    className={cn(
+                      'flex items-center gap-1 pl-4.5 text-xs text-ink-500',
+                      compact && 'sr-only',
+                    )}
+                  >
                     <GitBranch aria-hidden="true" className="size-3" />
                     from {takeLabel(origin.id)}
                   </span>
