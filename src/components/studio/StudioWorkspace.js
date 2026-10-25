@@ -9,10 +9,12 @@ import { useHotkeys } from '@/hooks/useHotkeys';
 import { downloadGeneration } from '@/lib/download';
 import { layoutLineage } from '@/lib/studio/layout';
 import { neighbourImage } from '@/lib/studio/navigation';
+import { BRANCH_INPUT_ID, BranchComposer } from './BranchComposer';
 import { DirectionBar } from './DirectionBar';
 import { Inspector } from './Inspector';
 import { LineageCanvas } from './LineageCanvas';
 import { StudioHeader } from './StudioHeader';
+import { useBranching } from './useBranching';
 import { useStudio } from './useStudio';
 
 /** @import { StudioProject } from '@/lib/studio/types' */
@@ -39,6 +41,7 @@ function Studio({ project }) {
   const toast = useToast();
   const { state, dispatch, view, imageIndex } = useStudio(project);
   const [viewerOpen, setViewerOpen] = useState(false);
+  const branching = useBranching({ state, dispatch, direction: view.direction });
   const layout = useMemo(() => layoutLineage(view), [view]);
 
   const selected = state.selectedImageId ? imageIndex.get(state.selectedImageId) : undefined;
@@ -78,6 +81,7 @@ function Studio({ project }) {
       x: () => id && dispatch({ type: 'toggleReject', id }),
       c: () => id && dispatch({ type: 'toggleCompare', id }),
       enter: () => id && setViewerOpen(true),
+      b: () => document.getElementById(BRANCH_INPUT_ID)?.focus(),
     },
     { enabled: !viewerOpen },
   );
@@ -106,6 +110,9 @@ function Studio({ project }) {
             selectedImageId={state.selectedImageId}
             onSelectImage={select}
             takeLabel={takeLabel}
+            pending={state.pending}
+            onRetryPending={branching.retry}
+            onCancelPending={branching.cancel}
             className="h-full max-lg:h-[70dvh]"
           />
         </main>
@@ -127,7 +134,16 @@ function Studio({ project }) {
             onOpen={() => setViewerOpen(true)}
             onDownload={() => download(selectedItem)}
             className="min-h-0 overflow-y-auto max-lg:hidden"
-          />
+          >
+            <BranchComposer
+              key={selected.take.id}
+              source={selected.take}
+              sourceImageId={selectedItem.id}
+              sourceLabel={`${takeLabel(selected.take.id)} · ${selected.index + 1}`}
+              busy={branching.busy}
+              onBranch={branching.branch}
+            />
+          </Inspector>
         )}
       </div>
 

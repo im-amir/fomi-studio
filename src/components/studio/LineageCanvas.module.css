@@ -29,3 +29,16 @@
   stroke-dasharray: 2 6;
   opacity: 0.6;
 }
+
+/* A new branch line draws itself from the parent to the new take. */
+.drawIn {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 600ms var(--ease-standard) forwards;
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}

@@ -8,6 +8,7 @@ import { useNow } from '@/hooks/useNow';
 import { cn, formatRelativeTime } from '@/lib/format';
 import { squareCrop } from '@/lib/media';
 import { LAYOUT } from '@/lib/studio/layout';
+import { PendingTake } from './PendingTake';
 
 /** @import { Take } from '@/lib/studio/types' */
 /** @import { RecipeChange } from '@/lib/studio/recipe' */
@@ -52,6 +53,7 @@ function ChangeChip({ changes }) {
  *   branchSources: Set<string>,
  *   selectedImageId: string | null,
  *   onSelectImage: (imageId: string) => void,
+ *   pending?: { error: import('@/lib/api').ApiError | null, startedAt: number, onRetry: () => void, onCancel: () => void } | null,
  * }} props
  */
 function TakeCardComponent({
@@ -67,6 +69,7 @@ function TakeCardComponent({
   branchSources,
   selectedImageId,
   onSelectImage,
+  pending = null,
 }) {
   const now = useNow();
   const pickCount = take.items.filter((item) => picks.has(item.id)).length;
@@ -74,7 +77,12 @@ function TakeCardComponent({
   return (
     <article
       aria-label={`${label}: ${changes.length ? changes.map((change) => `${change.label} ${change.to}`).join(', ') : 'starting point'}`}
-      className="absolute flex flex-col gap-2 rounded-panel border border-line bg-surface p-3 shadow-sm"
+      data-take-id={take.id}
+      aria-busy={pending ? !pending.error : undefined}
+      className={cn(
+        'absolute flex flex-col gap-2 rounded-panel border border-line bg-surface p-3 shadow-sm',
+        pending && 'animate-pop-in',
+      )}
       style={{ left: x, top: y, width: LAYOUT.cardWidth, height: LAYOUT.cardHeight }}
     >
       <header className="flex h-6 items-center gap-2">
@@ -87,66 +95,80 @@ function TakeCardComponent({
         <ChangeChip changes={changes} />
       </header>
 
-      <ul className="grid grid-cols-4 gap-2">
-        {take.items.map((item, index) => {
-          const picked = picks.has(item.id);
-          const rejected = rejects.has(item.id);
-          const selected = item.id === selectedImageId;
-          return (
-            <li key={item.id}>
-              <button
-                type="button"
-                data-image-id={item.id}
-                aria-pressed={selected}
-                aria-label={`${label}, image ${index + 1}${picked ? ', picked' : ''}${rejected ? ', rejected' : ''}`}
-                onClick={() => onSelectImage(item.id)}
-                className={cn(
-                  'relative block aspect-square w-full overflow-hidden rounded-chip bg-panel-strong focus-ring transition-[box-shadow,opacity] duration-fast',
-                  selected &&
-                    'shadow-[0_0_0_2px_var(--color-surface),0_0_0_4px_var(--color-accent-600)]',
-                  rejected && 'opacity-40',
-                )}
-              >
-                <Image
-                  src={squareCrop(item.src)}
-                  alt=""
-                  fill
-                  sizes={`${LAYOUT.thumbSize}px`}
-                  placeholder={item.blurDataURL ? 'blur' : 'empty'}
-                  blurDataURL={item.blurDataURL}
-                  className={cn('object-cover', rejected && 'grayscale')}
-                />
-                {picked && (
-                  <span className="absolute top-1.5 right-1.5 inline-flex size-5 items-center justify-center rounded-full bg-surface/90 shadow-sm">
-                    <Heart aria-hidden="true" className="size-3 fill-accent-600 text-accent-600" />
-                  </span>
-                )}
-                {compareIds.includes(item.id) && (
-                  <span className="absolute top-1.5 left-1.5 inline-flex size-5 items-center justify-center rounded-full bg-accent-600 text-2xs font-semibold text-on-accent">
-                    <span className="sr-only">Comparing, </span>
-                    {compareIds.indexOf(item.id) + 1}
-                  </span>
-                )}
-                {branchSources.has(item.id) && (
-                  <span className="absolute bottom-1.5 left-1.5 inline-flex size-5 items-center justify-center rounded-full bg-ink-900/70 text-white">
-                    <GitBranch aria-hidden="true" className="size-3" />
-                  </span>
-                )}
-              </button>
-            </li>
-          );
-        })}
-      </ul>
+      {pending ? (
+        <PendingTake
+          error={pending.error}
+          startedAt={pending.startedAt}
+          onRetry={pending.onRetry}
+          onCancel={pending.onCancel}
+        />
+      ) : (
+        <>
+          <ul className="grid grid-cols-4 gap-2">
+            {take.items.map((item, index) => {
+              const picked = picks.has(item.id);
+              const rejected = rejects.has(item.id);
+              const selected = item.id === selectedImageId;
+              return (
+                <li key={item.id}>
+                  <button
+                    type="button"
+                    data-image-id={item.id}
+                    aria-pressed={selected}
+                    aria-label={`${label}, image ${index + 1}${picked ? ', picked' : ''}${rejected ? ', rejected' : ''}`}
+                    onClick={() => onSelectImage(item.id)}
+                    className={cn(
+                      'relative block aspect-square w-full overflow-hidden rounded-chip bg-panel-strong focus-ring transition-[box-shadow,opacity] duration-fast',
+                      selected &&
+                        'shadow-[0_0_0_2px_var(--color-surface),0_0_0_4px_var(--color-accent-600)]',
+                      rejected && 'opacity-40',
+                    )}
+                  >
+                    <Image
+                      src={squareCrop(item.src)}
+                      alt=""
+                      fill
+                      sizes={`${LAYOUT.thumbSize}px`}
+                      placeholder={item.blurDataURL ? 'blur' : 'empty'}
+                      blurDataURL={item.blurDataURL}
+                      className={cn('object-cover', rejected && 'grayscale')}
+                    />
+                    {picked && (
+                      <span className="absolute top-1.5 right-1.5 inline-flex size-5 items-center justify-center rounded-full bg-surface/90 shadow-sm">
+                        <Heart
+                          aria-hidden="true"
+                          className="size-3 fill-accent-600 text-accent-600"
+                        />
+                      </span>
+                    )}
+                    {compareIds.includes(item.id) && (
+                      <span className="absolute top-1.5 left-1.5 inline-flex size-5 items-center justify-center rounded-full bg-accent-600 text-2xs font-semibold text-on-accent">
+                        <span className="sr-only">Comparing, </span>
+                        {compareIds.indexOf(item.id) + 1}
+                      </span>
+                    )}
+                    {branchSources.has(item.id) && (
+                      <span className="absolute bottom-1.5 left-1.5 inline-flex size-5 items-center justify-center rounded-full bg-ink-900/70 text-white">
+                        <GitBranch aria-hidden="true" className="size-3" />
+                      </span>
+                    )}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
 
-      <footer className="mt-auto flex items-center justify-between text-xs text-ink-500">
-        <span>{now ? formatRelativeTime(take.createdAt, now) : ' '}</span>
-        {pickCount > 0 && (
-          <span className="inline-flex items-center gap-1">
-            <Heart aria-hidden="true" className="size-3 fill-current" />
-            {pickCount} {pickCount === 1 ? 'pick' : 'picks'}
-          </span>
-        )}
-      </footer>
+          <footer className="mt-auto flex items-center justify-between text-xs text-ink-500">
+            <span>{now ? formatRelativeTime(take.createdAt, now) : ' '}</span>
+            {pickCount > 0 && (
+              <span className="inline-flex items-center gap-1">
+                <Heart aria-hidden="true" className="size-3 fill-current" />
+                {pickCount} {pickCount === 1 ? 'pick' : 'picks'}
+              </span>
+            )}
+          </footer>
+        </>
+      )}
     </article>
   );
 }

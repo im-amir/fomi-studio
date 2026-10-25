@@ -24,6 +24,9 @@ import { TakeCard } from './TakeCard';
  *   selectedImageId: string | null,
  *   onSelectImage: (imageId: string) => void,
  *   takeLabel: (takeId: string) => string,
+ *   pending: import('./useStudio').PendingBranch | null,
+ *   onRetryPending: () => void,
+ *   onCancelPending: () => void,
  *   className?: string,
  * }} props
  */
@@ -36,6 +39,9 @@ export function LineageCanvas({
   selectedImageId,
   onSelectImage,
   takeLabel,
+  pending,
+  onRetryPending,
+  onCancelPending,
   className,
 }) {
   /** @type {React.RefObject<HTMLDivElement | null>} */
@@ -65,6 +71,15 @@ export function LineageCanvas({
       top: box.y + LAYOUT.cardHeight / 2 - scroller.clientHeight / 2,
     });
   }, [layout, newestTakeId]);
+
+  // Bring a new take into view the moment it starts generating.
+  const pendingTakeId = pending?.take.id;
+  useEffect(() => {
+    if (!pendingTakeId) return;
+    scrollerRef.current
+      ?.querySelector(`[data-take-id="${pendingTakeId}"]`)
+      ?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+  }, [pendingTakeId]);
 
   // Keep the selection in view as it moves with the keyboard.
   useEffect(() => {
@@ -96,6 +111,7 @@ export function LineageCanvas({
                 key={branch.id}
                 className={cn(
                   styles.laneHeader,
+                  branch.id === pending?.newBranch?.id && 'animate-fade-in',
                   'flex flex-col justify-center gap-1 border-b border-line/60 pr-8 pl-5 last:border-b-0',
                 )}
                 style={{ width: LAYOUT.laneHeaderWidth, height: LAYOUT.laneHeight }}
@@ -132,7 +148,13 @@ export function LineageCanvas({
             <path
               key={connector.id}
               d={connector.path}
-              className={cn(styles.connector, !connector.branch && styles.trunk)}
+              // pathLength=1 lets the CSS draw animation work for any path length.
+              pathLength={connector.childId === pending?.take.id ? 1 : undefined}
+              className={cn(
+                styles.connector,
+                !connector.branch && styles.trunk,
+                connector.childId === pending?.take.id && styles.drawIn,
+              )}
               style={{ stroke: `var(--color-lane-${connector.hue})` }}
             />
           ))}
@@ -157,6 +179,16 @@ export function LineageCanvas({
               branchSources={branchSources}
               selectedImageId={selectedImageId}
               onSelectImage={onSelectImage}
+              pending={
+                pending?.take.id === take.id
+                  ? {
+                      error: pending.error,
+                      startedAt: pending.startedAt,
+                      onRetry: onRetryPending,
+                      onCancel: onCancelPending,
+                    }
+                  : null
+              }
             />
           );
         })}

@@ -30,6 +30,7 @@ export const LAYOUT = {
 /**
  * @typedef {object} Connector
  * @property {string} id
+ * @property {string} childId   the take the line leads to
  * @property {string} path      SVG path data
  * @property {number} hue       lane colour of the child
  * @property {boolean} branch   true when it starts a new lane
@@ -69,6 +70,7 @@ export function layoutLineage(project) {
     return [
       {
         id: `${take.parentTakeId}-${take.id}`,
+        childId: take.id,
         path: connectorPath(
           from.x + cardWidth,
           from.y + cardHeight / 2,
