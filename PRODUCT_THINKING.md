@@ -24,12 +24,12 @@ The problem: after 200 images you can't find the good ones, and you forget which
 
 ## 4. Which existing products inspired your thinking? What did you like? What would you improve?
 
-- **Git:** branches you can see.
-- **Lightroom:** pick and reject with one key.
-- **Cursor and Figma:** ⌘K, and showing exactly what changed.
-- **Krea and Magnific:** clean, image first.
+- **Higgsfield:** images fill the screen and the prompt bar sits at the bottom. Liked that the images come first. Would improve: it's one long feed, so it's hard to tell which settings made which image.
+- **Krea:** very clean, a few chips under the prompt instead of big menus. Liked how simple it feels. Would improve: older results get lost as you keep going.
+- **Magnific and OpenArt:** settings panel on the left, results on the right. Liked that every setting is easy to find. Would improve: a lot of options on screen at once.
+- **Leonardo:** good presets and models to start from. Would improve: lots of menus to dig through.
 
-What I'd improve in most AI tools: results get lost in a feed, and you can't see where a good image came from.
+Outside AI tools: branches from **Git**, pick and reject keys from **Lightroom**, ⌘K from **Cursor** and **Figma**.
 
 ## 5. If you had another month, what would you improve?
 
