@@ -2,6 +2,7 @@
 
 import { CircleAlert, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { describeRecipe } from '@/lib/recipe';
 import { ROW_CLASS } from './BatchRow';
 import { PromptCard } from './PromptCard';
 
@@ -16,7 +17,7 @@ import { PromptCard } from './PromptCard';
 export function ErrorRow({ error, request, onRetry, onDismiss }) {
   return (
     <section aria-label="Generation failed" className={ROW_CLASS}>
-      <PromptCard batch={request} />
+      <PromptCard prompt={request.prompt} model={request.model} recipe={describeRecipe(request)} />
       <div
         role="alert"
         className="flex min-h-48 flex-col items-center justify-center gap-4 rounded-panel border border-dashed border-danger/40 bg-danger-soft p-6 text-center"

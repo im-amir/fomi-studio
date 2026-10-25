@@ -1,6 +1,7 @@
 import 'server-only';
 import { IMAGE_PROMPT_SETS } from '@/data/prompt-sets';
 import { VIDEO_CLIPS } from '@/data/video-clips';
+import { DEFAULT_REQUEST } from '@/lib/constants';
 import { createImageGeneration, createVideoGeneration, getSetPhotoIds } from './media';
 
 /** @import { AspectRatioId, Batch, HistoryPage } from '@/lib/types' */
@@ -49,6 +50,7 @@ function buildHistory() {
         model: 'fomi-cinematic',
         style: null,
         aspectRatio: '16:9',
+        advanced: { ...DEFAULT_REQUEST.advanced, seed: 2_000_000 + step * 13 },
         createdAt,
         items: [0, 1].map((index) =>
           createVideoGeneration(VIDEO_CLIPS[(entry.clip + index) % VIDEO_CLIPS.length], {
@@ -75,6 +77,7 @@ function buildHistory() {
       model: set.model,
       style: null,
       aspectRatio: entry.aspectRatio,
+      advanced: { ...DEFAULT_REQUEST.advanced, seed: 1_000_000 + step * 97 },
       createdAt,
       items: Array.from({ length: ITEMS_PER_BATCH }, (_, index) =>
         createImageGeneration(photoIds[(entry.round * ITEMS_PER_BATCH + index) % photoIds.length], {

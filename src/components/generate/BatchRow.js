@@ -2,6 +2,7 @@
 
 import { memo } from 'react';
 import { cn } from '@/lib/format';
+import { describeRecipe } from '@/lib/recipe';
 import { GenerationGrid } from './GenerationGrid';
 import { PromptCard } from './PromptCard';
 
@@ -49,7 +50,10 @@ function BatchRowComponent({
       )}
     >
       <PromptCard
-        batch={batch}
+        prompt={batch.prompt}
+        model={batch.model}
+        recipe={describeRecipe({ ...batch, count: batch.items.length })}
+        createdAt={batch.createdAt}
         onCopy={() => onCopyPrompt(batch)}
         onReuse={() => onReuse(batch)}
         onHide={() => onHide(batch.id)}

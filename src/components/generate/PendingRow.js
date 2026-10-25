@@ -3,6 +3,7 @@
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useSimulatedProgress } from '@/hooks/useSimulatedProgress';
 import { getAspectRatio } from '@/lib/constants';
+import { describeRecipe } from '@/lib/recipe';
 import { ROW_CLASS } from './BatchRow';
 import { PromptCard } from './PromptCard';
 
@@ -57,7 +58,9 @@ export function PendingRow({ pending }) {
   return (
     <section aria-label="Generating" aria-busy="true" className={ROW_CLASS}>
       <PromptCard
-        batch={request}
+        prompt={request.prompt}
+        model={request.model}
+        recipe={describeRecipe(request)}
         status={<ProgressLabel startedAt={startedAt} count={request.count} noun={noun} />}
       />
       <ul className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4">

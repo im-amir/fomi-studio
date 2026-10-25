@@ -54,6 +54,7 @@
  * @property {string} model
  * @property {string | null} style
  * @property {AspectRatioId} aspectRatio
+ * @property {AdvancedSettings} advanced  as run — `seed` is the one actually used
  * @property {string} createdAt
  * @property {Generation[]} items
  */

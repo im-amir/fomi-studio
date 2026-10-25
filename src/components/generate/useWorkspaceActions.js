@@ -155,6 +155,7 @@ export function useWorkspaceActions({
         model: batch.model,
         aspectRatio: batch.aspectRatio,
         style: batch.style,
+        advanced: batch.advanced,
       });
       textareaRef.current?.focus();
       toast('Prompt and settings loaded');

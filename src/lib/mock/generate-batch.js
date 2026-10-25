@@ -37,6 +37,7 @@ export function createBatch(request, { now, random, createId }) {
     model: request.model,
     style: request.style,
     aspectRatio: request.aspectRatio,
+    advanced: { ...request.advanced, seed: baseSeed },
     createdAt,
     items,
   };
