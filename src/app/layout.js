@@ -46,7 +46,7 @@ export default function RootLayout({ children }) {
           {THEME_INIT_SCRIPT}
         </Script>
         {children}
-        <PartSwitcher />
+        <PartSwitcher placement="page" />
       </body>
     </html>
   );

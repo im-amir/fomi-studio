@@ -1,4 +1,5 @@
 import { Headphones, Images } from 'lucide-react';
+import { PartSwitcher } from '@/components/part-switcher/PartSwitcher';
 import { cn } from '@/lib/format';
 import { BrandMark } from './BrandMark';
 import { ThemeToggle } from './ThemeToggle';
@@ -19,8 +20,9 @@ export function TopBar({ nav, onOpenGallery, className }) {
         className,
       )}
     >
-      <div>
+      <div className="flex items-center gap-4">
         <BrandMark />
+        <PartSwitcher placement="bar" />
       </div>
       {nav}
       <div className="flex items-center justify-end gap-2 md:gap-3">
