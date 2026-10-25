@@ -35,7 +35,7 @@ export function createBatch(request, { now, random, createId }) {
     prompt: request.prompt,
     mode: request.mode,
     model: request.model,
-    style: request.style,
+    styles: request.styles,
     aspectRatio: request.aspectRatio,
     advanced: { ...request.advanced, seed: baseSeed },
     createdAt,

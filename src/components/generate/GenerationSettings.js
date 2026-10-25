@@ -11,6 +11,13 @@ import { StylePresetPicker } from './StylePresetPicker';
 
 /** @import { ComposerSettings } from '@/hooks/useComposerSettings' */
 
+/** "None", "Film", "Film, Anime" or "Film +2" — short enough for the collapsed row. */
+function stylesSummary(/** @type {string[]} */ ids) {
+  const labels = ids.flatMap((id) => getStylePreset(id)?.label ?? []);
+  if (labels.length === 0) return 'None';
+  return labels.length <= 2 ? labels.join(', ') : `${labels[0]} +${labels.length - 1}`;
+}
+
 const AdvancedSettings = dynamic(() => import('./AdvancedSettings'), {
   loading: () => <Skeleton className="h-64 rounded-control" />,
 });
@@ -21,7 +28,7 @@ const AdvancedSettings = dynamic(() => import('./AdvancedSettings'), {
  * @param {{ composer: ComposerSettings }} props
  */
 export function GenerationSettings({ composer }) {
-  const { settings, setAdvanced, setStyle } = composer;
+  const { settings, setAdvanced, toggleStyle } = composer;
   // Advanced settings are code-split; mount them on first open and keep them mounted
   // so the collapse animation has content to animate.
   const [advancedMounted, setAdvancedMounted] = useState(false);
@@ -42,8 +49,8 @@ export function GenerationSettings({ composer }) {
         >
           {advancedMounted && <AdvancedSettings value={settings.advanced} onChange={setAdvanced} />}
         </Accordion>
-        <Accordion title="Styles" summary={getStylePreset(settings.style)?.label ?? 'None'}>
-          <StylePresetPicker value={settings.style} onChange={setStyle} />
+        <Accordion title="Styles" summary={stylesSummary(settings.styles)}>
+          <StylePresetPicker value={settings.styles} onToggle={toggleStyle} />
         </Accordion>
       </div>
     </div>

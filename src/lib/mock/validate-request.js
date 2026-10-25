@@ -68,9 +68,13 @@ export function validateGenerateRequest(body) {
     return invalid('model', `${model.name} can't generate ${mode}s yet.`);
   }
 
-  const style = input.style ?? null;
-  if (style !== null && (typeof style !== 'string' || !getStylePreset(style))) {
-    return invalid('style', 'Unknown style preset.');
+  const styles = input.styles ?? [];
+  if (
+    !Array.isArray(styles) ||
+    styles.some((id) => typeof id !== 'string' || !getStylePreset(id)) ||
+    new Set(styles).size !== styles.length
+  ) {
+    return invalid('styles', 'Styles must be a list of known, distinct style presets.');
   }
 
   const advanced = isRecord(input.advanced)
@@ -108,7 +112,7 @@ export function validateGenerateRequest(body) {
       count: input.count,
       aspectRatio,
       model: model.id,
-      style: /** @type {string | null} */ (style),
+      styles: /** @type {string[]} */ (styles),
       advanced: { seed: /** @type {number | null} */ (seed), guidance, negativePrompt, quality },
     },
   };

@@ -42,7 +42,7 @@ export const DEFAULT_REQUEST = {
   count: 4,
   aspectRatio: '2:3',
   model: 'fomi-portrait',
-  style: null,
+  styles: [],
   advanced: { seed: null, guidance: 7, negativePrompt: '', quality: 'standard' },
 };
 

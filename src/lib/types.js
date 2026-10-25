@@ -22,7 +22,7 @@
  * @property {number} count
  * @property {AspectRatioId} aspectRatio
  * @property {string} model            model id, see src/data/models.js
- * @property {string | null} style     style preset id, see src/data/style-presets.js
+ * @property {string[]} styles          style preset ids (any number), see src/data/style-presets.js
  * @property {AdvancedSettings} advanced
  */
 
@@ -52,7 +52,7 @@
  * @property {string} prompt
  * @property {Mode} mode
  * @property {string} model
- * @property {string | null} style
+ * @property {string[]} styles
  * @property {AspectRatioId} aspectRatio
  * @property {AdvancedSettings} advanced  as run — `seed` is the one actually used
  * @property {string} createdAt

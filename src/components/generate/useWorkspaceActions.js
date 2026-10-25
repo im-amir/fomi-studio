@@ -153,7 +153,7 @@ export function useWorkspaceActions({ composer, feed, history, feedRef, overlayO
         mode: batch.mode,
         model: batch.model,
         aspectRatio: batch.aspectRatio,
-        style: batch.style,
+        styles: batch.styles,
         advanced: batch.advanced,
       });
       focusVisiblePrompt();

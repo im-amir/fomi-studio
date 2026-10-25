@@ -12,7 +12,7 @@ import { DEFAULT_REQUEST, IMAGE_COUNTS, VIDEO_COUNTS } from '@/lib/constants';
  *   | { type: 'count', value: number }
  *   | { type: 'aspectRatio', value: AspectRatioId }
  *   | { type: 'model', value: string }
- *   | { type: 'style', value: string | null }
+ *   | { type: 'toggleStyle', value: string }
  *   | { type: 'advanced', value: Partial<AdvancedSettings> }
  *   | { type: 'load', value: Partial<GenerateRequest> }} ComposerAction
  */
@@ -52,8 +52,13 @@ function reducer(state, action) {
       return { ...state, aspectRatio: action.value };
     case 'model':
       return reconcile({ ...state, model: action.value });
-    case 'style':
-      return { ...state, style: action.value };
+    case 'toggleStyle':
+      return {
+        ...state,
+        styles: state.styles.includes(action.value)
+          ? state.styles.filter((id) => id !== action.value)
+          : [...state.styles, action.value],
+      };
     case 'advanced':
       return { ...state, advanced: { ...state.advanced, ...action.value } };
     case 'load':
@@ -85,8 +90,8 @@ export function useComposerSettings(initial = DEFAULT_REQUEST) {
       setAspectRatio: (value) => dispatch({ type: 'aspectRatio', value }),
       /** @param {string} value */
       setModel: (value) => dispatch({ type: 'model', value }),
-      /** @param {string | null} value */
-      setStyle: (value) => dispatch({ type: 'style', value }),
+      /** @param {string} value */
+      toggleStyle: (value) => dispatch({ type: 'toggleStyle', value }),
       /** @param {Partial<AdvancedSettings>} value */
       setAdvanced: (value) => dispatch({ type: 'advanced', value }),
       /** @param {Partial<GenerateRequest>} value */
