@@ -11,6 +11,8 @@ import { squareCrop } from '@/lib/media';
 /**
  * The keepers, across every branch, in the order they were picked — the end of the
  * loop. Clicking one jumps to it on the canvas; Export hands them off with their recipes.
+ * The small × is a mouse shortcut; touch screens unpick from the selection bar instead,
+ * which has a full-size target.
  * @param {{
  *   items: Generation[],
  *   selectedImageId: string | null,
@@ -66,7 +68,7 @@ export function SelectsTray({ items, selectedImageId, onSelect, onUnpick, onExpo
                 type="button"
                 onClick={() => onUnpick(item.id)}
                 aria-label="Remove from selects"
-                className="absolute -top-1.5 -right-1.5 inline-flex size-5 items-center justify-center rounded-full bg-ink-900 text-canvas opacity-0 focus-ring transition-opacity duration-fast group-focus-within:opacity-100 group-hover:opacity-100 pointer-coarse:opacity-100"
+                className="absolute -top-1.5 -right-1.5 inline-flex size-5 items-center justify-center rounded-full bg-ink-900 text-canvas opacity-0 focus-ring transition-opacity duration-fast group-focus-within:opacity-100 group-hover:opacity-100 pointer-coarse:hidden"
               >
                 <X aria-hidden="true" className="size-3" />
               </button>
