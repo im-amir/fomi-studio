@@ -8,6 +8,7 @@ import { ToastProvider } from '@/components/ui/Toaster';
 import { useCanvasFeed } from '@/hooks/useCanvasFeed';
 import { useComposerSettings } from '@/hooks/useComposerSettings';
 import { useHistory } from '@/hooks/useHistory';
+import { useHotkeys } from '@/hooks/useHotkeys';
 import { BatchFeed } from './BatchFeed';
 import { ControlPanel } from './ControlPanel';
 import { HistoryStrip } from './HistoryStrip';
@@ -43,6 +44,8 @@ function Workspace({ initialHistory, initialFeedSize }) {
   const [viewerItemId, setViewerItemId] = useState(/** @type {string | null} */ (null));
   const [historyOpen, setHistoryOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  // Desktop only: fold the settings panel to a rail so the results get the width.
+  const [panelCollapsed, setPanelCollapsed] = useState(false);
   /** @type {React.RefObject<HTMLElement | null>} */
   const feedRef = useRef(null);
 
@@ -52,7 +55,13 @@ function Workspace({ initialHistory, initialFeedSize }) {
     history,
     feedRef,
     overlayOpen: viewerItemId !== null || historyOpen || settingsOpen,
+    showComposer: () => setPanelCollapsed(false),
   });
+
+  useHotkeys(
+    { 'mod+\\': () => setPanelCollapsed((collapsed) => !collapsed) },
+    { enabled: viewerItemId === null && !historyOpen && !settingsOpen },
+  );
 
   const viewerItems = useMemo(() => feed.batches.flatMap((batch) => batch.items), [feed.batches]);
   const viewerIndex = viewerItems.findIndex((item) => item.id === viewerItemId);
@@ -88,12 +97,21 @@ function Workspace({ initialHistory, initialFeedSize }) {
           className="z-20 lg:absolute lg:inset-x-0 lg:top-0"
         />
 
-        <div className="mt-4 grid gap-6 lg:mt-0 lg:h-full lg:grid-cols-[18.75rem_minmax(0,1fr)] lg:gap-7">
+        <div
+          className="mt-4 grid gap-6 lg:mt-0 lg:h-full lg:grid-cols-[var(--panel-width)_minmax(0,1fr)] lg:gap-7 lg:transition-[grid-template-columns] lg:duration-slow"
+          style={
+            /** @type {React.CSSProperties} */ ({
+              '--panel-width': panelCollapsed ? '3.5rem' : '18.75rem',
+            })
+          }
+        >
           <ControlPanel
             composer={composer}
             buttonState={actions.buttonState}
             onGenerate={actions.generateFromComposer}
             onCancel={actions.cancel}
+            collapsed={panelCollapsed}
+            onCollapsedChange={setPanelCollapsed}
             className="lg:mt-30 lg:mb-6 lg:overflow-y-auto"
           />
 

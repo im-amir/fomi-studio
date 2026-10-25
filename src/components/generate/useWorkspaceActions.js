@@ -26,16 +26,25 @@ function describeRun({ mode, count }) {
 /**
  * Every user action in the Part A workspace, kept out of the layout component.
  * Callbacks passed to memoised rows/tiles are stable, so typing in the prompt never
- * re-renders the results grid.
+ * re-renders the results grid. `showComposer` reopens a collapsed settings panel before
+ * the prompt is focused.
  * @param {{
  *   composer: ComposerSettings,
  *   feed: ReturnType<typeof import('@/hooks/useCanvasFeed').useCanvasFeed>,
  *   history: ReturnType<typeof import('@/hooks/useHistory').useHistory>,
  *   feedRef: React.RefObject<HTMLElement | null>,
  *   overlayOpen: boolean,
+ *   showComposer: () => void,
  * }} params
  */
-export function useWorkspaceActions({ composer, feed, history, feedRef, overlayOpen }) {
+export function useWorkspaceActions({
+  composer,
+  feed,
+  history,
+  feedRef,
+  overlayOpen,
+  showComposer,
+}) {
   const toast = useToast();
   const { state: generation, generate, cancel: cancelGeneration, dismissError } = useGenerate();
   const [announcement, setAnnouncement] = useState('');
@@ -158,18 +167,21 @@ export function useWorkspaceActions({ composer, feed, history, feedRef, overlayO
         styles: batch.styles,
         advanced: batch.advanced,
       });
-      focusVisiblePrompt();
+      showComposer();
+      // The panel may be re-rendering open; focus once it's on screen.
+      requestAnimationFrame(focusVisiblePrompt);
       toast('Prompt and settings loaded');
     },
-    [loadComposer, toast],
+    [loadComposer, toast, showComposer],
   );
 
   const pickPrompt = useCallback(
     /** @param {string} prompt */ (prompt) => {
       loadComposer({ prompt });
-      focusVisiblePrompt();
+      showComposer();
+      requestAnimationFrame(focusVisiblePrompt);
     },
-    [loadComposer],
+    [loadComposer, showComposer],
   );
 
   /** @type {GenerateButtonState} */
