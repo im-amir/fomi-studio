@@ -73,7 +73,7 @@ export function PromptCard({ prompt, model, recipe, createdAt, status, onCopy, o
             type="button"
             aria-expanded={expanded}
             onClick={() => setExpanded((value) => !value)}
-            className="-mt-1 self-start rounded-sm text-sm font-medium text-accent-600 focus-ring hover:text-accent-700"
+            className="-mt-1 self-start rounded-sm text-sm font-medium text-accent-700 focus-ring hover:text-ink-900"
           >
             {expanded ? 'Show less' : 'Show more'}
           </button>
