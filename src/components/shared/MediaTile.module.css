@@ -1,0 +1,40 @@
+/* Blurred preview sits underneath; the sharp media fades in over it, staggered by --i. */
+.preview {
+  position: absolute;
+  inset: -8px;
+  background-size: cover;
+  background-position: center;
+  filter: blur(14px) saturate(1.1);
+}
+
+.media {
+  opacity: 0;
+  scale: 1.03;
+  transition:
+    opacity var(--duration-slow) var(--ease-standard),
+    scale 600ms var(--ease-standard);
+  transition-delay: calc(var(--i, 0) * 60ms);
+}
+
+.loaded {
+  opacity: 1;
+  scale: 1;
+}
+
+/* Hover lift: transform + shadow only, never layout. */
+.tile {
+  transition:
+    translate var(--duration-base) var(--ease-standard),
+    box-shadow var(--duration-base) var(--ease-standard);
+}
+
+@media (hover: hover) {
+  .tile:hover {
+    translate: 0 -2px;
+    box-shadow: var(--shadow-md);
+  }
+}
+
+.scrim {
+  background: linear-gradient(to top, rgb(20 14 10 / 0.55), rgb(20 14 10 / 0) 55%);
+}
