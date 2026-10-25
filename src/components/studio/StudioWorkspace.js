@@ -6,13 +6,15 @@ import { PrimaryNav } from '@/components/shared/PrimaryNav';
 import { TopBar } from '@/components/shared/TopBar';
 import { ToastProvider, useToast } from '@/components/ui/Toaster';
 import { useHotkeys } from '@/hooks/useHotkeys';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { downloadGeneration } from '@/lib/download';
 import { buildHandoff, downloadJson } from '@/lib/studio/export';
-import { layoutLineage } from '@/lib/studio/layout';
+import { LAYOUT, layoutLineage } from '@/lib/studio/layout';
 import { neighbourImage } from '@/lib/studio/navigation';
 import { BRANCH_INPUT_ID, BranchComposer } from './BranchComposer';
 import { CompareBar } from './CompareBar';
 import { DirectionBar } from './DirectionBar';
+import { SelectionBar } from './SelectionBar';
 import { SelectsTray } from './SelectsTray';
 import { Inspector } from './Inspector';
 import { LineageCanvas } from './LineageCanvas';
@@ -29,6 +31,7 @@ const MediaLightbox = dynamic(() => import('@/components/shared/MediaLightbox'))
 const CompareView = dynamic(() => import('./CompareView'));
 const CommandPalette = dynamic(() => import('@/components/ui/CommandPalette'));
 const ShortcutsSheet = dynamic(() => import('./ShortcutsSheet'));
+const InspectorSheet = dynamic(() => import('./InspectorSheet'));
 const NO_UPSCALES = new Set(/** @type {string[]} */ ([]));
 
 /**
@@ -51,12 +54,27 @@ function Studio({ project }) {
   const [compareOpen, setCompareOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
-  const overlayOpen = viewerOpen || compareOpen || paletteOpen || shortcutsOpen;
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const overlayOpen = viewerOpen || compareOpen || paletteOpen || shortcutsOpen || detailsOpen;
+  // Phones get dots instead of lane names, so the canvas keeps its width for the work.
+  const wideLanes = useMediaQuery('(min-width: 768px)', true);
+  // The inspector renders either beside the canvas or in the sheet — never both, so its
+  // ids (and the B shortcut's target) are unique.
+  const isDesktop = useMediaQuery('(min-width: 1024px)', true);
   const branching = useBranching({ state, dispatch, direction: view.direction });
-  const layout = useMemo(() => layoutLineage(view), [view]);
+  const layout = useMemo(
+    () =>
+      layoutLineage(view, {
+        laneHeaderWidth: wideLanes ? LAYOUT.laneHeaderWidth : LAYOUT.compactLaneHeaderWidth,
+      }),
+    [view, wideLanes],
+  );
 
   const selected = state.selectedImageId ? imageIndex.get(state.selectedImageId) : undefined;
   const selectedItem = selected?.take.items[selected.index];
+  const selectedBranch = selected
+    ? view.branches.find((branch) => branch.id === selected.take.branchId)
+    : undefined;
   const takeLabel = useCallback(
     /** @param {string} id */ (id) => `T${view.takes.findIndex((take) => take.id === id) + 1}`,
     [view.takes],
@@ -162,8 +180,43 @@ function Studio({ project }) {
     if (action === 'upscale') toast('Upscaling is available after export.');
   };
 
+  /** The inspector + branch composer; a side panel on desktop, a sheet below it. */
+  /** @param {string} [className] */
+  const renderInspector = (className) =>
+    selected && selectedItem ? (
+      <Inspector
+        item={selectedItem}
+        take={selected.take}
+        takeLabel={takeLabel(selected.take.id)}
+        parent={view.takes.find((take) => take.id === selected.take.parentTakeId)}
+        branch={selectedBranch}
+        direction={view.direction}
+        picked={state.picks.has(selectedItem.id)}
+        rejected={state.rejects.has(selectedItem.id)}
+        comparing={state.compareIds.includes(selectedItem.id)}
+        onTogglePick={() => dispatch({ type: 'togglePick', id: selectedItem.id })}
+        onToggleReject={() => dispatch({ type: 'toggleReject', id: selectedItem.id })}
+        onToggleCompare={() => dispatch({ type: 'toggleCompare', id: selectedItem.id })}
+        onOpen={() => setViewerOpen(true)}
+        onDownload={() => download(selectedItem)}
+        className={className}
+      >
+        <BranchComposer
+          key={selected.take.id}
+          source={selected.take}
+          sourceImageId={selectedItem.id}
+          sourceLabel={`${takeLabel(selected.take.id)} · ${selected.index + 1}`}
+          busy={branching.busy}
+          onBranch={(request) => {
+            setDetailsOpen(false);
+            branching.branch(request);
+          }}
+        />
+      </Inspector>
+    ) : null;
+
   return (
-    <div className="mx-auto flex max-w-[110rem] flex-col gap-4 px-4 pb-6 md:px-6 lg:h-dvh lg:px-8">
+    <div className="mx-auto flex max-w-[110rem] flex-col gap-4 px-4 pb-24 md:px-6 lg:h-dvh lg:px-8 lg:pb-6">
       <TopBar nav={<PrimaryNav activeId="projects" />} />
       <StudioHeader
         project={view}
@@ -204,36 +257,30 @@ function Studio({ project }) {
           />
         </main>
 
-        {selected && selectedItem && (
-          <Inspector
-            item={selectedItem}
-            take={selected.take}
-            takeLabel={takeLabel(selected.take.id)}
-            parent={view.takes.find((take) => take.id === selected.take.parentTakeId)}
-            branch={view.branches.find((branch) => branch.id === selected.take.branchId)}
-            direction={view.direction}
-            picked={state.picks.has(selectedItem.id)}
-            rejected={state.rejects.has(selectedItem.id)}
-            comparing={state.compareIds.includes(selectedItem.id)}
-            onTogglePick={() => dispatch({ type: 'togglePick', id: selectedItem.id })}
-            onToggleReject={() => dispatch({ type: 'toggleReject', id: selectedItem.id })}
-            onToggleCompare={() => dispatch({ type: 'toggleCompare', id: selectedItem.id })}
-            onOpen={() => setViewerOpen(true)}
-            onDownload={() => download(selectedItem)}
-            className="min-h-0 overflow-y-auto max-lg:hidden"
-          >
-            <BranchComposer
-              key={selected.take.id}
-              source={selected.take}
-              sourceImageId={selectedItem.id}
-              sourceLabel={`${takeLabel(selected.take.id)} · ${selected.index + 1}`}
-              busy={branching.busy}
-              onBranch={branching.branch}
-            />
-          </Inspector>
-        )}
+        {isDesktop && renderInspector('min-h-0 overflow-y-auto')}
       </div>
 
+      {selected && selectedItem && (
+        <SelectionBar
+          item={selectedItem}
+          label={`${takeLabel(selected.take.id)} · ${selected.index + 1} of ${selected.take.items.length}`}
+          branchName={selectedBranch?.name}
+          picked={state.picks.has(selectedItem.id)}
+          rejected={state.rejects.has(selectedItem.id)}
+          comparing={state.compareIds.includes(selectedItem.id)}
+          onTogglePick={() => dispatch({ type: 'togglePick', id: selectedItem.id })}
+          onToggleReject={() => dispatch({ type: 'toggleReject', id: selectedItem.id })}
+          onToggleCompare={() => dispatch({ type: 'toggleCompare', id: selectedItem.id })}
+          onOpenDetails={() => setDetailsOpen(true)}
+        />
+      )}
+      <Suspense fallback={null}>
+        {detailsOpen && !isDesktop && (
+          <InspectorSheet onClose={() => setDetailsOpen(false)}>
+            {renderInspector('border-0 p-1')}
+          </InspectorSheet>
+        )}
+      </Suspense>
       <Suspense fallback={null}>
         {paletteOpen && (
           <CommandPalette
