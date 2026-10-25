@@ -1,0 +1,4 @@
+.next
+node_modules
+src/data/media-manifest.json
+yarn.lock
