@@ -68,6 +68,12 @@ function Workspace({ initialHistory, initialFeedSize }) {
 
   return (
     <div className="mx-auto flex max-w-[110rem] flex-col px-4 md:px-6 lg:h-dvh lg:overflow-hidden lg:px-8">
+      <a
+        href="#results"
+        className="fixed top-3 left-3 z-[80] -translate-y-24 rounded-control bg-ink-900 px-4 py-2 text-sm font-medium text-canvas shadow-lg transition-[translate] duration-base focus:translate-y-0"
+      >
+        Skip to results
+      </a>
       <TopBar
         nav={<PrimaryNav mode={composer.settings.mode} onModeChange={composer.setMode} />}
         onOpenGallery={() => setHistoryOpen(true)}
@@ -93,6 +99,8 @@ function Workspace({ initialHistory, initialFeedSize }) {
 
           <main
             ref={feedRef}
+            id="results"
+            tabIndex={-1}
             // Warm the viewer chunk on first intent so opening a result is instant.
             onPointerEnter={loadLightbox}
             onFocus={loadLightbox}
