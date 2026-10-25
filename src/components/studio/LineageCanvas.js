@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { GitBranch } from 'lucide-react';
+import { revealWithin } from '@/lib/dom';
 import { cn } from '@/lib/format';
 import { LAYOUT } from '@/lib/studio/layout';
 import { diffRecipe } from '@/lib/studio/recipe';
@@ -72,22 +73,29 @@ export function LineageCanvas({
     });
   }, [layout, newestTakeId]);
 
+  /** Scroll only the canvas, keeping clear of the sticky lane names. */
+  const reveal = useCallback(
+    /** @param {string} selector */ (selector) => {
+      const scroller = scrollerRef.current;
+      const element = scroller?.querySelector(selector);
+      if (scroller && element)
+        revealWithin(scroller, element, { left: LAYOUT.laneHeaderWidth + 16 });
+    },
+    [],
+  );
+
   // Bring a new take into view the moment it starts generating.
   const pendingTakeId = pending?.take.id;
   useEffect(() => {
     if (!pendingTakeId) return;
-    scrollerRef.current
-      ?.querySelector(`[data-take-id="${pendingTakeId}"]`)
-      ?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
-  }, [pendingTakeId]);
+    reveal(`[data-take-id="${pendingTakeId}"]`);
+  }, [pendingTakeId, reveal]);
 
   // Keep the selection in view as it moves with the keyboard.
   useEffect(() => {
     if (!selectedImageId) return;
-    scrollerRef.current
-      ?.querySelector(`[data-image-id="${selectedImageId}"]`)
-      ?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
-  }, [selectedImageId]);
+    reveal(`[data-image-id="${selectedImageId}"]`);
+  }, [selectedImageId, reveal]);
 
   return (
     <div
