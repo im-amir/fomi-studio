@@ -17,6 +17,7 @@
     transparent 80%
   );
   animation: shimmer 1.6s var(--ease-standard) infinite;
+  animation-delay: var(--shimmer-delay, 0ms);
 }
 
 @keyframes shimmer {

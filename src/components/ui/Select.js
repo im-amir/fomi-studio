@@ -135,7 +135,7 @@ export function Select({
         onClick={() => (open ? close() : openList())}
         onKeyDown={handleTriggerKeyDown}
         className={cn(
-          'flex h-8 w-full items-center gap-1.5 rounded-chip bg-surface pr-2 pl-2.5 text-xs text-ink-900 shadow-sm',
+          'flex h-8 w-full items-center gap-1 rounded-chip bg-surface pr-1.5 pl-2 text-xs text-ink-900 shadow-sm',
           'focus-ring transition-[box-shadow,background-color] duration-fast hover:bg-canvas',
           open && 'bg-canvas',
         )}

@@ -63,3 +63,8 @@
     }
   }
 }
+
+/* Modal dialogs lock page scroll without JS. */
+html:has(dialog[open]) {
+  overflow: hidden;
+}
