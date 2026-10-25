@@ -1,0 +1,142 @@
+/*
+ * Design tokens — the single source of truth for color, type, radius, depth and motion.
+ * Tailwind v4 turns every variable in @theme into a utility (bg-canvas, text-ink-600, rounded-panel…).
+ * Default palettes and type sizes are cleared so components can only use these tokens.
+ * Contrast ratios (WCAG 2.2) are noted next to text colors; see README for the full table.
+ */
+
+@theme {
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-white: #ffffff;
+
+  /* Surfaces — canvas and panel values sampled from the FOMI mockup. */
+  --color-canvas: #fbfaf6;
+  --color-surface: #ffffff;
+  --color-panel: #f8ede7;
+  --color-panel-strong: #f4e3dc;
+
+  /* Ink — warm charcoal, never pure black. */
+  --color-ink-900: #2a2420; /* 14.7:1 on canvas */
+  --color-ink-600: #5e544d; /* 6.4:1 on panel */
+  --color-ink-500: #756a62; /* 5.0:1 on canvas — not for use on panel */
+
+  /* Accent — the mockup's #E59C87 fails AA with white text (2.2:1), so the button uses 600. */
+  --color-accent-100: #f6e2d9;
+  --color-accent-500: #d9774f; /* decorative / indicator only: 3.0:1 on canvas */
+  --color-accent-600: #b9502e; /* white text 4.9:1 */
+  --color-accent-700: #a24424; /* white text 6.2:1 */
+  --color-on-accent: #ffffff;
+
+  --color-line: #efe5df;
+  --color-line-strong: #968478; /* control borders: 3.6:1 on white, 3.1:1 on panel */
+
+  --color-danger: #a3261b; /* 6.3:1 on danger-soft */
+  --color-danger-soft: #fbe9e5;
+  --color-success: #2f6b4f;
+  --color-scrim: rgb(42 36 32 / 0.56);
+
+  /* Type */
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --text-*: initial;
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.8125rem;
+  --text-sm--line-height: 1.125rem;
+  --text-base: 0.875rem;
+  --text-base--line-height: 1.25rem;
+  --text-md: 1rem;
+  --text-md--line-height: 1.5rem;
+  --text-lg: 1.25rem;
+  --text-lg--line-height: 1.75rem;
+  --text-xl: 1.75rem;
+  --text-xl--line-height: 2.125rem;
+  --text-2xl: 2.5rem;
+  --text-2xl--line-height: 2.75rem;
+
+  /* Radii: chips 8 · controls 10 · media 12 · panels 20 */
+  --radius-chip: 8px;
+  --radius-control: 10px;
+  --radius-media: 12px;
+  --radius-panel: 20px;
+
+  /* Depth — warm-tinted so shadows don't look grey on cream. */
+  --shadow-sm: 0 1px 2px rgb(60 40 30 / 0.06), 0 1px 1px rgb(60 40 30 / 0.04);
+  --shadow-md: 0 4px 16px -4px rgb(60 40 30 / 0.12), 0 2px 4px rgb(60 40 30 / 0.04);
+  --shadow-lg: 0 24px 48px -12px rgb(60 40 30 / 0.24), 0 4px 12px rgb(60 40 30 / 0.06);
+
+  /* Motion: one easing, three durations. */
+  --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --default-transition-timing-function: var(--ease-standard);
+  --default-transition-duration: 200ms;
+
+  --breakpoint-3xl: 96rem;
+
+  --animate-pop-in: pop-in 200ms var(--ease-standard);
+  --animate-fade-in: fade-in 320ms var(--ease-standard) both;
+
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      scale: 0.96;
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+}
+
+:root {
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 320ms;
+  --focus-ring: 0 0 0 2px var(--color-canvas), 0 0 0 4px var(--color-accent-600);
+}
+
+[data-theme='dark'] {
+  --color-canvas: #1a1613;
+  --color-surface: #221d19;
+  --color-panel: #262019;
+  --color-panel-strong: #312921;
+  --color-ink-900: #f2eae3; /* 13.6:1 on panel */
+  --color-ink-600: #c4b6ab;
+  --color-ink-500: #a89a8f; /* 5.9:1 on panel */
+  --color-accent-100: #3a261d;
+  --color-accent-500: #e07f5c;
+  --color-accent-600: #e07f5c; /* dark text on it: 6.3:1 */
+  --color-accent-700: #f09a78;
+  --color-line: #2f2822;
+  --color-line-strong: #7a6b60; /* 3.5:1 on canvas */
+  --color-danger: #f2877a;
+  --color-danger-soft: #3a1f1a;
+  --color-success: #7cc4a0;
+  --color-on-accent: #1a1613;
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 16px -4px rgb(0 0 0 / 0.5);
+  --shadow-lg: 0 24px 48px -12px rgb(0 0 0 / 0.6);
+  color-scheme: dark;
+}
+
+@utility duration-fast {
+  transition-duration: var(--duration-fast);
+}
+@utility duration-base {
+  transition-duration: var(--duration-base);
+}
+@utility duration-slow {
+  transition-duration: var(--duration-slow);
+}
+@utility focus-ring {
+  outline: none;
+  &:focus-visible {
+    box-shadow: var(--focus-ring);
+  }
+}
