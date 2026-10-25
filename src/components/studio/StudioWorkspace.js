@@ -11,6 +11,7 @@ import { buildHandoff, downloadJson } from '@/lib/studio/export';
 import { layoutLineage } from '@/lib/studio/layout';
 import { neighbourImage } from '@/lib/studio/navigation';
 import { BRANCH_INPUT_ID, BranchComposer } from './BranchComposer';
+import { CompareBar } from './CompareBar';
 import { DirectionBar } from './DirectionBar';
 import { SelectsTray } from './SelectsTray';
 import { Inspector } from './Inspector';
@@ -24,6 +25,7 @@ import { useStudio } from './useStudio';
 /** @import { Generation } from '@/lib/types' */
 
 const MediaLightbox = dynamic(() => import('@/components/shared/MediaLightbox'));
+const CompareView = dynamic(() => import('./CompareView'));
 const NO_UPSCALES = new Set(/** @type {string[]} */ ([]));
 
 /**
@@ -43,6 +45,7 @@ function Studio({ project }) {
   const toast = useToast();
   const { state, dispatch, view, imageIndex } = useStudio(project);
   const [viewerOpen, setViewerOpen] = useState(false);
+  const [compareOpen, setCompareOpen] = useState(false);
   const branching = useBranching({ state, dispatch, direction: view.direction });
   const layout = useMemo(() => layoutLineage(view), [view]);
 
@@ -58,6 +61,24 @@ function Studio({ project }) {
     () => [...state.picks].flatMap((pickId) => allItems.find((item) => item.id === pickId) ?? []),
     [state.picks, allItems],
   );
+
+  const compareEntries = useMemo(
+    () =>
+      state.compareIds.flatMap((compareId) => {
+        const found = imageIndex.get(compareId);
+        return found
+          ? [
+              {
+                item: found.take.items[found.index],
+                take: found.take,
+                label: `${takeLabel(found.take.id)} · ${found.index + 1}`,
+              },
+            ]
+          : [];
+      }),
+    [state.compareIds, imageIndex, takeLabel],
+  );
+  const canCompare = compareEntries.length >= 2;
 
   const exportSelects = () => {
     downloadJson(buildHandoff(view, [...state.picks], takeLabel), 'hearth-autumn-selects.json');
@@ -94,8 +115,9 @@ function Studio({ project }) {
       c: () => id && dispatch({ type: 'toggleCompare', id }),
       enter: () => id && setViewerOpen(true),
       b: () => document.getElementById(BRANCH_INPUT_ID)?.focus(),
+      'shift+c': () => canCompare && setCompareOpen(true),
     },
-    { enabled: !viewerOpen },
+    { enabled: !viewerOpen && !compareOpen },
   );
 
   /** @param {TileAction} action @param {Generation} item */
@@ -127,6 +149,13 @@ function Studio({ project }) {
             onCancelPending={branching.cancel}
             className="min-h-0 flex-1 max-lg:h-[70dvh] max-lg:flex-none"
           />
+          {compareEntries.length > 0 && (
+            <CompareBar
+              items={compareEntries.map((entry) => entry.item)}
+              onOpen={() => setCompareOpen(true)}
+              onClear={() => dispatch({ type: 'clearCompare' })}
+            />
+          )}
           <SelectsTray
             items={pickedItems}
             selectedImageId={state.selectedImageId}
@@ -166,6 +195,17 @@ function Studio({ project }) {
         )}
       </div>
 
+      <Suspense fallback={null}>
+        {compareOpen && canCompare && (
+          <CompareView
+            entries={compareEntries}
+            picks={state.picks}
+            onTogglePick={(imageId) => dispatch({ type: 'togglePick', id: imageId })}
+            onRemove={(imageId) => dispatch({ type: 'toggleCompare', id: imageId })}
+            onClose={() => setCompareOpen(false)}
+          />
+        )}
+      </Suspense>
       <Suspense fallback={null}>
         {viewerOpen && selectedItem && (
           <MediaLightbox
