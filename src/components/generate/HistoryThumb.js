@@ -32,7 +32,7 @@ function HistoryThumbComponent({ batch, active, tabIndex, onSelect }) {
         aria-current={active || undefined}
         onClick={() => onSelect(batch)}
         className={cn(
-          'relative block size-20 overflow-hidden rounded-chip bg-panel-strong focus-ring transition-[scale,box-shadow] duration-fast hover:scale-[1.04] active:scale-[0.97]',
+          'relative block size-16 overflow-hidden rounded-chip bg-panel-strong focus-ring transition-[scale,box-shadow] duration-fast hover:scale-[1.04] active:scale-[0.97] md:size-20',
           active && 'ring-2 ring-accent-600 ring-offset-2 ring-offset-surface',
         )}
       >
@@ -40,7 +40,7 @@ function HistoryThumbComponent({ batch, active, tabIndex, onSelect }) {
           src={isVideo ? /** @type {string} */ (cover.poster) : cover.src}
           alt=""
           fill
-          sizes="80px"
+          sizes="(min-width: 768px) 80px, 64px"
           placeholder={cover.blurDataURL ? 'blur' : 'empty'}
           blurDataURL={cover.blurDataURL}
           className="object-cover"

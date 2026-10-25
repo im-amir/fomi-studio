@@ -58,25 +58,25 @@ export function HistoryStrip({ items, activeBatchId, onSelect, onViewAll, classN
     <section
       aria-label="History"
       className={cn(
-        'flex h-26 items-center gap-4 rounded-panel bg-surface p-3 shadow-md',
+        'flex items-center gap-3 rounded-panel bg-surface p-2 shadow-md md:h-26 md:gap-4 md:p-3',
         className,
       )}
     >
       <button
         type="button"
         onClick={onViewAll}
-        className="flex size-20 shrink-0 flex-col items-center justify-center rounded-media border border-line bg-surface text-center focus-ring transition-[border-color,scale] duration-fast hover:border-line-strong active:scale-[0.97]"
+        className="flex size-16 shrink-0 flex-col items-center justify-center rounded-media border border-line bg-surface text-center focus-ring transition-[border-color,scale] duration-fast hover:border-line-strong active:scale-[0.97] md:size-20"
       >
-        <span className="text-md font-semibold text-ink-900">History</span>
+        <span className="text-sm font-semibold text-ink-900 md:text-md">History</span>
         <span className="text-2xs text-ink-500">View all</span>
       </button>
-      <span aria-hidden="true" className="h-10 w-px shrink-0 bg-line" />
+      <span aria-hidden="true" className="h-10 w-px shrink-0 bg-line max-md:hidden" />
 
       <div className="relative min-w-0 flex-1">
         <ul
           ref={scrollerRef}
           onKeyDown={handleKeyDown}
-          className="flex snap-x snap-mandatory scroll-px-1 [scrollbar-width:none] gap-4 overflow-x-auto overscroll-x-contain scroll-smooth p-1"
+          className="flex snap-x snap-mandatory scroll-px-1 [scrollbar-width:none] gap-3 overflow-x-auto overscroll-x-contain scroll-smooth p-1 md:gap-4"
         >
           {items.map((batch, index) => (
             <li key={batch.id} className="shrink-0 snap-start">
