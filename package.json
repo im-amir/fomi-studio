@@ -10,7 +10,8 @@
     "typecheck": "tsc -p jsconfig.json",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "media:build": "node scripts/build-media-manifest.mjs"
+    "media:build": "node scripts/build-media-manifest.mjs",
+    "docs:pdf": "node scripts/build-submission.mjs"
   },
   "dependencies": {
     "lucide-react": "^1.61.0",
