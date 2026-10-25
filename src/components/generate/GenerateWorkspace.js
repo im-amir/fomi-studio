@@ -102,6 +102,7 @@ function Workspace({ initialHistory, initialFeedSize }) {
             <h1 className="sr-only">Create</h1>
             <BatchFeed
               batches={feed.batches}
+              initialIds={feed.initialIds}
               generation={actions.generation}
               highlightedId={feed.highlightedId}
               favorites={feed.favorites}

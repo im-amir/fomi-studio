@@ -27,6 +27,7 @@ function columnCount(/** @type {HTMLElement} */ grid) {
  *   items: Generation[],
  *   label: string,
  *   eager?: boolean,
+ *   reveal?: boolean,
  *   prioritizeFirstRow?: boolean,
  *   favorites: Set<string>,
  *   upscaled: Set<string>,
@@ -38,6 +39,7 @@ export function GenerationGrid({
   items,
   label,
   eager = false,
+  reveal = true,
   prioritizeFirstRow = false,
   favorites,
   upscaled,
@@ -85,6 +87,7 @@ export function GenerationGrid({
             index={index}
             sizes={TILE_SIZES}
             eager={eager}
+            reveal={reveal}
             highPriority={prioritizeFirstRow && index < 4}
             favorite={favorites.has(item.id)}
             upscaled={upscaled.has(item.id)}

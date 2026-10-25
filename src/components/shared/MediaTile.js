@@ -17,11 +17,15 @@ import styles from './MediaTile.module.css';
  * The "open" button covers the tile and is the grid's roving focus target; the quick
  * actions are mouse shortcuts (tabIndex -1) — every one of them is also in the viewer.
  *
+ * `reveal` fades media in once loaded (new results); it's off for media in the first
+ * paint, because an image at opacity 0 doesn't count as painted for LCP.
+ *
  * @param {{
  *   item: Generation,
  *   index: number,
  *   sizes: string,
  *   eager?: boolean,
+ *   reveal?: boolean,
  *   highPriority?: boolean,
  *   favorite: boolean,
  *   upscaled: boolean,
@@ -35,6 +39,7 @@ function MediaTileComponent({
   index,
   sizes,
   eager = false,
+  reveal = true,
   highPriority = false,
   favorite,
   upscaled,
@@ -98,7 +103,7 @@ function MediaTileComponent({
           loading={eager ? 'eager' : 'lazy'}
           fetchPriority={highPriority ? 'high' : 'auto'}
           onLoad={() => setLoaded(true)}
-          className={cn(styles.media, loaded && styles.loaded, 'object-cover')}
+          className={cn(reveal && styles.media, reveal && loaded && styles.loaded, 'object-cover')}
         />
         {isVideo && (
           <video
