@@ -11,6 +11,7 @@ import { useHistory } from '@/hooks/useHistory';
 import { BatchFeed } from './BatchFeed';
 import { ControlPanel } from './ControlPanel';
 import { HistoryStrip } from './HistoryStrip';
+import { PromptDock } from './PromptDock';
 import { useWorkspaceActions } from './useWorkspaceActions';
 
 /** @import { HistoryPage } from '@/lib/types' */
@@ -18,6 +19,7 @@ import { useWorkspaceActions } from './useWorkspaceActions';
 const loadLightbox = () => import('@/components/shared/MediaLightbox');
 const MediaLightbox = dynamic(loadLightbox);
 const HistoryDialog = dynamic(() => import('./HistoryDialog'));
+const SettingsSheet = dynamic(() => import('./SettingsSheet'));
 
 /**
  * Part A: the generation workspace from the FOMI mockup.
@@ -40,6 +42,7 @@ function Workspace({ initialHistory, initialFeedSize }) {
   const feed = useCanvasFeed(initialHistory.items.slice(0, initialFeedSize));
   const [viewerItemId, setViewerItemId] = useState(/** @type {string | null} */ (null));
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   /** @type {React.RefObject<HTMLElement | null>} */
   const feedRef = useRef(null);
 
@@ -48,7 +51,7 @@ function Workspace({ initialHistory, initialFeedSize }) {
     feed,
     history,
     feedRef,
-    overlayOpen: viewerItemId !== null || historyOpen,
+    overlayOpen: viewerItemId !== null || historyOpen || settingsOpen,
   });
 
   const viewerItems = useMemo(() => feed.batches.flatMap((batch) => batch.items), [feed.batches]);
@@ -116,6 +119,14 @@ function Workspace({ initialHistory, initialFeedSize }) {
         </div>
       </div>
 
+      <PromptDock
+        composer={composer}
+        buttonState={actions.buttonState}
+        onGenerate={actions.generateFromComposer}
+        onCancel={actions.cancel}
+        onOpenSettings={() => setSettingsOpen(true)}
+      />
+
       <p role="status" aria-live="polite" className="sr-only">
         {actions.announcement}
       </p>
@@ -133,6 +144,11 @@ function Workspace({ initialHistory, initialFeedSize }) {
             onClose={() => setViewerItemId(null)}
             onAction={actions.handleTileAction}
           />
+        )}
+      </Suspense>
+      <Suspense fallback={null}>
+        {settingsOpen && (
+          <SettingsSheet composer={composer} onClose={() => setSettingsOpen(false)} />
         )}
       </Suspense>
       <Suspense fallback={null}>

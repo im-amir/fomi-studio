@@ -32,6 +32,8 @@ export const metadata = {
 export const viewport = {
   themeColor: '#fbfaf6',
   colorScheme: 'light',
+  // Lets the phone dock pad itself with env(safe-area-inset-bottom) above the home bar.
+  viewportFit: 'cover',
 };
 
 /** @param {{ children: React.ReactNode }} props */

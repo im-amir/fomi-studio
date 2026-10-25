@@ -15,10 +15,20 @@ import { cn } from '@/lib/format';
  *   onSubmit: () => void,
  *   rows: number,
  *   maxHeight: number,
+ *   placeholder?: string,
  *   className?: string,
  * }} props
  */
-export function PromptTextarea({ id, value, onChange, onSubmit, rows, maxHeight, className }) {
+export function PromptTextarea({
+  id,
+  value,
+  onChange,
+  onSubmit,
+  rows,
+  maxHeight,
+  placeholder = 'Describe what you imagine — the subject, the light, the mood…',
+  className,
+}) {
   /** @type {React.RefObject<HTMLTextAreaElement | null>} */
   const ref = useRef(null);
 
@@ -41,7 +51,7 @@ export function PromptTextarea({ id, value, onChange, onSubmit, rows, maxHeight,
         value={value}
         rows={rows}
         maxLength={PROMPT_MAX_LENGTH}
-        placeholder="Describe what you imagine — the subject, the light, the mood…"
+        placeholder={placeholder}
         onChange={(event) => onChange(event.target.value)}
         onKeyDown={(event) => {
           if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {

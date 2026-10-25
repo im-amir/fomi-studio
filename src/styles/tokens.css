@@ -80,6 +80,7 @@
 
   --animate-pop-in: pop-in 200ms var(--ease-standard);
   --animate-fade-in: fade-in 320ms var(--ease-standard) both;
+  --animate-sheet-up: sheet-up 320ms var(--ease-standard);
 
   @keyframes pop-in {
     from {
@@ -90,6 +91,11 @@
   @keyframes fade-in {
     from {
       opacity: 0;
+    }
+  }
+  @keyframes sheet-up {
+    from {
+      translate: 0 100%;
     }
   }
 }

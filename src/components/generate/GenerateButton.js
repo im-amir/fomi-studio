@@ -1,30 +1,45 @@
 'use client';
 
-import { Check, Sparkles, X } from 'lucide-react';
+import { ArrowUp, Check, Sparkles, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Spinner';
 import { Tooltip } from '@/components/ui/Tooltip';
 import { useModifierKey } from '@/hooks/useModifierKey';
+import { cn } from '@/lib/format';
 
 /** @typedef {'ready' | 'empty' | 'generating' | 'done'} GenerateButtonState */
 
-const HINT_ID = 'generate-hint';
+const COMPACT_CLASS = 'size-10 shrink-0 rounded-full px-0';
 
 /**
  * The primary action. While generating it becomes Cancel (same place, same size) so
- * stopping is never a hunt; a brief tick confirms success.
- * @param {{ state: GenerateButtonState, onGenerate: () => void, onCancel: () => void }} props
+ * stopping is never a hunt; a brief tick confirms success. `compact` is the icon-only
+ * version for the phone dock.
+ * @param {{
+ *   state: GenerateButtonState,
+ *   onGenerate: () => void,
+ *   onCancel: () => void,
+ *   compact?: boolean,
+ *   hintId?: string,
+ * }} props
  */
-export function GenerateButton({ state, onGenerate, onCancel }) {
+export function GenerateButton({
+  state,
+  onGenerate,
+  onCancel,
+  compact = false,
+  hintId = 'generate-hint',
+}) {
   const mod = useModifierKey();
 
   if (state === 'generating') {
     return (
       <Button
-        size="lg"
+        size={compact ? 'md' : 'lg'}
         variant="secondary"
+        aria-label={compact ? 'Cancel generation' : undefined}
         onClick={onCancel}
-        className="group/cancel min-w-34"
+        className={cn('group/cancel', compact ? COMPACT_CLASS : 'min-w-34')}
         icon={
           <span className="relative inline-flex size-4 items-center justify-center">
             <Spinner className="text-accent-600 transition-opacity duration-fast group-hover/cancel:opacity-0" />
@@ -35,7 +50,7 @@ export function GenerateButton({ state, onGenerate, onCancel }) {
           </span>
         }
       >
-        Cancel
+        {!compact && 'Cancel'}
       </Button>
     );
   }
@@ -44,24 +59,20 @@ export function GenerateButton({ state, onGenerate, onCancel }) {
     state === 'empty'
       ? 'Describe what you want to create first'
       : `Generate${mod ? ` · ${mod} ↵` : ''}`;
+  const idleIcon = compact ? <ArrowUp className="size-5" /> : <Sparkles className="size-4" />;
 
   return (
-    <Tooltip content={hint} id={HINT_ID}>
+    <Tooltip content={hint} id={hintId}>
       <Button
-        size="lg"
+        size={compact ? 'md' : 'lg'}
         disabled={state === 'empty'}
-        aria-describedby={HINT_ID}
+        aria-label={compact ? 'Generate' : undefined}
+        aria-describedby={hintId}
         onClick={onGenerate}
-        className="min-w-34"
-        icon={
-          state === 'done' ? (
-            <Check className="size-4 animate-pop-in" />
-          ) : (
-            <Sparkles className="size-4" />
-          )
-        }
+        className={compact ? COMPACT_CLASS : 'min-w-34'}
+        icon={state === 'done' ? <Check className="size-4 animate-pop-in" /> : idleIcon}
       >
-        {state === 'done' ? 'Done' : 'Generate'}
+        {!compact && (state === 'done' ? 'Done' : 'Generate')}
       </Button>
     </Tooltip>
   );

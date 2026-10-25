@@ -64,7 +64,13 @@ export function useWorkspaceActions({ composer, feed, history, feedRef, overlayO
 
   const run = useCallback(
     /** @param {GenerateRequest} request */ async (request) => {
-      feedRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+      // Desktop: the feed is its own scroller. Smaller screens scroll the page instead.
+      const feedElement = feedRef.current;
+      if (feedElement && feedElement.scrollHeight > feedElement.clientHeight) {
+        feedElement.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        feedElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
       setJustFinished(false);
       setAnnouncement(`Generating ${describeRun(request)}…`);
       const batch = await generate(request);
