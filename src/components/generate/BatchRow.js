@@ -9,7 +9,9 @@ import { PromptCard } from './PromptCard';
 /** @import { Batch, Generation } from '@/lib/types' */
 /** @import { TileAction } from '@/components/shared/MediaTile' */
 
-export const ROW_CLASS = 'grid gap-4 lg:grid-cols-[minmax(13rem,17.25rem)_minmax(0,1fr)]';
+// Card beside the images from 1280px; below that the panel leaves too little width, so
+// the card sits above them (as on tablets) and the images keep a useful size.
+export const ROW_CLASS = 'grid gap-4 xl:grid-cols-[minmax(13rem,17.25rem)_minmax(0,1fr)]';
 
 /**
  * @param {{

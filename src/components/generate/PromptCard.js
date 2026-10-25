@@ -11,7 +11,7 @@ import { cn, formatRelativeTime } from '@/lib/format';
 /**
  * The prompt and settings behind a batch, so results never lose their context.
  *
- * On desktop the card fills exactly the height of its row (the images decide it), so
+ * On wide screens the card fills exactly the height of its row (the images decide it), so
  * every batch reads as one aligned block. A prompt that doesn't fit fades out; "Show
  * more" releases the card to its natural height and the row grows with it.
  *
@@ -46,18 +46,18 @@ export function PromptCard({ prompt, model, recipe, createdAt, status, onCopy, o
   const time = createdAt && now ? formatRelativeTime(createdAt, now) : null;
 
   return (
-    <div className="relative lg:min-h-56">
+    <div className="relative xl:min-h-56">
       <article
         className={cn(
           'flex flex-col gap-3 rounded-panel bg-panel p-4',
-          !expanded && 'lg:absolute lg:inset-0',
+          !expanded && 'xl:absolute xl:inset-0',
         )}
       >
         <div
           ref={textRef}
           className={cn(
             'relative min-h-0 flex-1 overflow-hidden',
-            expanded ? 'overflow-visible' : 'max-lg:max-h-[4.5rem]',
+            expanded ? 'overflow-visible' : 'max-xl:max-h-[4.5rem]',
           )}
         >
           <p className="text-sm text-ink-600">{prompt}</p>
