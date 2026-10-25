@@ -75,7 +75,7 @@ function Workspace({ initialHistory, initialFeedSize }) {
         Skip to results
       </a>
       <TopBar
-        nav={<PrimaryNav mode={composer.settings.mode} onModeChange={composer.setMode} />}
+        nav={<PrimaryNav activeId={composer.settings.mode} onModeChange={composer.setMode} />}
         onOpenGallery={() => setHistoryOpen(true)}
       />
 

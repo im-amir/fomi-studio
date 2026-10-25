@@ -9,7 +9,7 @@ const PILL_CLASS =
 /**
  * Compact on phones (labels collapse to icons, Gallery lives in the history strip's
  * "View all"), the mockup's three-zone bar from tablet up.
- * @param {{ nav: React.ReactNode, onOpenGallery: () => void, className?: string }} props
+ * @param {{ nav: React.ReactNode, onOpenGallery?: () => void, className?: string }} props
  */
 export function TopBar({ nav, onOpenGallery, className }) {
   return (
@@ -24,10 +24,12 @@ export function TopBar({ nav, onOpenGallery, className }) {
       </div>
       {nav}
       <div className="flex items-center justify-end gap-2 md:gap-3">
-        <button type="button" onClick={onOpenGallery} className={cn(PILL_CLASS, 'max-sm:hidden')}>
-          <Images aria-hidden="true" />
-          <span className="max-md:sr-only">Gallery</span>
-        </button>
+        {onOpenGallery && (
+          <button type="button" onClick={onOpenGallery} className={cn(PILL_CLASS, 'max-sm:hidden')}>
+            <Images aria-hidden="true" />
+            <span className="max-md:sr-only">Gallery</span>
+          </button>
+        )}
         <a href="mailto:support@fomi.art" className={cn(PILL_CLASS, 'max-sm:hidden')}>
           <Headphones aria-hidden="true" />
           <span className="max-md:sr-only">Support</span>

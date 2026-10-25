@@ -37,11 +37,13 @@ const MOBILE_ITEMS = ITEMS.filter((item) => !item.desktopOnly);
  * Tool switcher. The coral bar on the track slides to the active tool, so switching
  * Image ↔ Video here or in the panel animates the same indicator. Column count and
  * active index switch per breakpoint through CSS variables — no JS, no hydration flash.
- * @param {{ mode: Mode, onModeChange: (mode: Mode) => void }} props
+ *
+ * Without `onModeChange` (outside the generator) Image/Video link back to it.
+ * @param {{ activeId: string, onModeChange?: (mode: Mode) => void }} props
  */
-export function PrimaryNav({ mode, onModeChange }) {
+export function PrimaryNav({ activeId, onModeChange }) {
   /** @param {NavItem} item */
-  const isActive = (item) => item.kind === 'mode' && item.mode === mode;
+  const isActive = (item) => item.id === activeId;
   const vars = /** @type {React.CSSProperties} */ ({
     '--cols-sm': MOBILE_ITEMS.length,
     '--cols-md': ITEMS.length,
@@ -69,11 +71,15 @@ export function PrimaryNav({ mode, onModeChange }) {
               className={cn('flex justify-center', item.desktopOnly && 'max-md:hidden')}
             >
               <Tooltip content={item.label} side="bottom">
-                {item.kind === 'link' ? (
+                {item.kind === 'link' || (item.kind === 'mode' && !onModeChange) ? (
                   <Link
-                    href={item.href}
+                    href={item.kind === 'link' ? item.href : '/'}
                     aria-label={item.label}
-                    className={cn(ITEM_CLASS, 'text-ink-600 hover:bg-panel hover:text-ink-900')}
+                    aria-current={active ? 'page' : undefined}
+                    className={cn(
+                      ITEM_CLASS,
+                      active ? 'text-ink-900' : 'text-ink-600 hover:bg-panel hover:text-ink-900',
+                    )}
                   >
                     {item.icon}
                   </Link>
@@ -83,7 +89,7 @@ export function PrimaryNav({ mode, onModeChange }) {
                     aria-label={item.label}
                     aria-pressed={item.kind === 'mode' ? active : undefined}
                     aria-disabled={item.kind === 'soon' || undefined}
-                    onClick={item.kind === 'mode' ? () => onModeChange(item.mode) : undefined}
+                    onClick={item.kind === 'mode' ? () => onModeChange?.(item.mode) : undefined}
                     className={cn(
                       ITEM_CLASS,
                       item.kind === 'soon' ? 'text-ink-500' : 'active:scale-[0.94]',
