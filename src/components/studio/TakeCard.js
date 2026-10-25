@@ -85,7 +85,7 @@ function TakeCardComponent({
         <ChangeChip changes={changes} />
       </header>
 
-      <ul className="grid grid-cols-2 gap-2">
+      <ul className="grid grid-cols-4 gap-2">
         {take.items.map((item, index) => {
           const picked = picks.has(item.id);
           const rejected = rejects.has(item.id);
@@ -109,7 +109,7 @@ function TakeCardComponent({
                   src={squareCrop(item.src)}
                   alt=""
                   fill
-                  sizes="108px"
+                  sizes={`${LAYOUT.thumbSize}px`}
                   placeholder={item.blurDataURL ? 'blur' : 'empty'}
                   blurDataURL={item.blurDataURL}
                   className={cn('object-cover', rejected && 'grayscale')}

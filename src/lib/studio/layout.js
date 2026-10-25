@@ -1,17 +1,20 @@
 /** @import { StudioProject } from './types' */
 
 /**
- * Lineage canvas geometry. Lanes are rows (one per branch); columns are time (one per
- * take, oldest left). Everything is computed from these constants, so cards and
+ * Lineage canvas geometry. Lanes are rows (one per branch); columns are generations: a
+ * take sits one column right of its parent and of the previous take in its lane (like a
+ * compact git graph), so order is kept without a column per timestamp leaving the
+ * canvas mostly empty. Everything is computed from these constants, so cards and
  * connectors line up without measuring the DOM.
  */
 export const LAYOUT = {
   laneHeaderWidth: 200,
-  cardWidth: 248,
-  cardHeight: 312,
+  thumbSize: 84,
+  cardWidth: 384,
+  cardHeight: 168,
   // Wider than the card so branch connectors can turn in the gutter, never behind a card.
-  columnWidth: 304,
-  laneHeight: 348,
+  columnWidth: 440,
+  laneHeight: 196,
   padding: 32,
   cornerRadius: 14,
 };
@@ -42,8 +45,14 @@ export function layoutLineage(project) {
 
   /** @type {Map<string, CardBox>} */
   const boxes = new Map();
-  project.takes.forEach((take, column) => {
+  /** @type {Map<string, number>} last column used in each lane */
+  const laneEnd = new Map();
+  // Takes are oldest first, so a parent is always placed before its children.
+  project.takes.forEach((take) => {
     const row = rowOf.get(take.branchId) ?? 0;
+    const parentColumn = take.parentTakeId ? (boxes.get(take.parentTakeId)?.column ?? -1) : -1;
+    const column = Math.max(parentColumn, laneEnd.get(take.branchId) ?? -1) + 1;
+    laneEnd.set(take.branchId, column);
     boxes.set(take.id, {
       row,
       column,
@@ -65,6 +74,7 @@ export function layoutLineage(project) {
           from.y + cardHeight / 2,
           to.x,
           to.y + cardHeight / 2,
+          to.row,
         ),
         hue: hueOf.get(take.branchId) ?? 1,
         branch: from.row !== to.row,
@@ -72,26 +82,27 @@ export function layoutLineage(project) {
     ];
   });
 
+  const columns = Math.max(0, ...[...boxes.values()].map((box) => box.column)) + 1;
   return {
     boxes,
     connectors,
-    width:
-      laneHeaderWidth +
-      padding * 2 +
-      project.takes.length * columnWidth -
-      (columnWidth - cardWidth),
+    width: laneHeaderWidth + padding * 2 + columns * columnWidth - (columnWidth - cardWidth),
     height: project.branches.length * laneHeight,
   };
 }
 
+const LANE_OFFSET_PX = 6;
+
 /**
  * Leaves the parent, turns in the first gutter, then runs along the child's lane — so a
- * branch line never passes behind another card in the parent's lane.
+ * branch line never passes behind another card in the parent's lane. The turn shifts a
+ * little per target lane so branches sharing a gutter stay distinguishable.
  * @param {number} x1 @param {number} y1 @param {number} x2 @param {number} y2
+ * @param {number} targetRow
  */
-function connectorPath(x1, y1, x2, y2) {
+function connectorPath(x1, y1, x2, y2, targetRow) {
   if (y1 === y2) return `M ${x1} ${y1} H ${x2}`;
-  const turnX = x1 + (LAYOUT.columnWidth - LAYOUT.cardWidth) / 2;
+  const turnX = x1 + (LAYOUT.columnWidth - LAYOUT.cardWidth) / 2 + (targetRow - 2) * LANE_OFFSET_PX;
   const r = Math.min(LAYOUT.cornerRadius, Math.abs(y2 - y1) / 2);
   const dir = y2 > y1 ? 1 : -1;
   return [

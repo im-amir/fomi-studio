@@ -13,7 +13,7 @@ import { TakeCard } from './TakeCard';
 /**
  * The project as a family tree laid out in lanes: one row per branch, time flowing
  * right. Branch lines start at the exact take they grew from, so you can always trace
- * how a result came to be. Opens scrolled to the newest work.
+ * how a result came to be. Opens centred on the newest take.
  * @param {{
  *   project: StudioProject,
  *   picks: Set<string>,
@@ -49,10 +49,16 @@ export function LineageCanvas({
     [project.branches],
   );
 
+  const newestTakeId = project.takes.at(-1)?.id;
   useEffect(() => {
     const scroller = scrollerRef.current;
-    if (scroller) scroller.scrollLeft = scroller.scrollWidth;
-  }, []);
+    const box = newestTakeId ? layout.boxes.get(newestTakeId) : undefined;
+    if (!scroller || !box) return;
+    scroller.scrollTo({
+      left: box.x + LAYOUT.cardWidth / 2 - scroller.clientWidth / 2,
+      top: box.y + LAYOUT.cardHeight / 2 - scroller.clientHeight / 2,
+    });
+  }, [layout, newestTakeId]);
 
   /** @param {Take} take */
   const labelOf = (take) => `T${project.takes.indexOf(take) + 1}`;
