@@ -63,7 +63,7 @@ export function PendingRow({ pending }) {
         recipe={describeRecipe(request)}
         status={<ProgressLabel startedAt={startedAt} count={request.count} noun={noun} />}
       />
-      <ul className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
+      <ul className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
         {Array.from({ length: request.count }, (_, slot) => (
           <li key={`${id}-${slot}`}>
             <Skeleton

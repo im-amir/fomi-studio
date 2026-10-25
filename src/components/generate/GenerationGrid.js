@@ -6,9 +6,10 @@ import { MediaTile } from '@/components/shared/MediaTile';
 /** @import { Generation } from '@/lib/types' */
 /** @import { TileAction } from '@/components/shared/MediaTile' */
 
-// Tiles are ~1/4 of the feed on desktop, 1/3 on tablet, 1/2 on phones.
+// Batches come in 1, 2, 4 or 8, so 4 columns from tablet up (2 on phones) always fill
+// whole rows; 3 columns would orphan a tile. Tiles are ~1/4 of the feed, 1/2 on phones.
 export const TILE_SIZES =
-  '(min-width: 1536px) 15vw, (min-width: 1024px) 18vw, (min-width: 768px) 30vw, 50vw';
+  '(min-width: 1536px) 15vw, (min-width: 1024px) 18vw, (min-width: 768px) 24vw, 50vw';
 
 /** Number of tiles in the first rendered row — the real column count at this width. */
 function columnCount(/** @type {HTMLElement} */ grid) {
@@ -75,7 +76,7 @@ export function GenerationGrid({
     <ul
       aria-label={label}
       onKeyDown={handleKeyDown}
-      className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4"
+      className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4"
     >
       {items.map((item, index) => (
         <li key={item.id} onFocus={() => setFocusIndex(index)}>
