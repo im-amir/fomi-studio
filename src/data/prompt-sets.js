@@ -55,6 +55,44 @@ export const IMAGE_PROMPT_SETS = [
     model: 'fomi-portrait',
     keywords: ['cat', 'kitten', 'pet', 'feline', 'animal'],
   },
+  // Studio (Part B) sets. People come before knitwear so "a person in a knit sweater"
+  // resolves to people on a tie (the matcher keeps the first best match).
+  {
+    key: 'autumnPortrait',
+    prompt: 'A person in a knit sweater holding a lit candle outdoors in autumn, golden light',
+    model: 'fomi-portrait',
+    keywords: ['person', 'people', 'holding', 'someone', 'hands'],
+  },
+  {
+    key: 'candles',
+    prompt: 'Hand-poured soy candle in an amber glass jar on an oak tabletop, warm light',
+    model: 'fomi-realism',
+    keywords: ['candle', 'soy', 'wax', 'jar', 'candlelit', 'flame'],
+  },
+  {
+    key: 'pumpkins',
+    prompt: 'Heirloom pumpkins on a rustic table, low-key autumn still life',
+    model: 'fomi-realism',
+    keywords: ['pumpkin', 'gourd', 'squash', 'harvest'],
+  },
+  {
+    key: 'mugs',
+    prompt: 'A ceramic mug of something warm on a wool blanket, autumn leaves',
+    model: 'fomi-realism',
+    keywords: ['mug', 'coffee', 'latte', 'tea', 'cocoa', 'cup'],
+  },
+  {
+    key: 'knitwear',
+    prompt: 'A stack of chunky knit throws on a linen backdrop, soft window light',
+    model: 'fomi-realism',
+    keywords: ['knit', 'sweater', 'throw', 'wool', 'cardigan', 'linen'],
+  },
+  {
+    key: 'autumnForest',
+    prompt: 'An autumn forest clearing at golden hour, light through the leaves',
+    model: 'fomi-cinematic',
+    keywords: ['autumn forest', 'foliage', 'maple', 'clearing', 'golden hour', 'woodland'],
+  },
 ];
 
 /** Prompts offered as one-click starters in the empty state. */
