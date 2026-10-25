@@ -4,7 +4,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useToast } from '@/components/ui/Toaster';
 import { useGenerate } from '@/hooks/useGenerate';
 import { useHotkeys } from '@/hooks/useHotkeys';
-import { DEFAULT_REQUEST } from '@/lib/constants';
+import { DEFAULT_REQUEST, PROMPT_MIN_WORDS } from '@/lib/constants';
+import { countWords } from '@/lib/format';
 import { downloadGeneration } from '@/lib/download';
 import { focusVisiblePrompt } from './PromptTextarea';
 
@@ -85,8 +86,9 @@ export function useWorkspaceActions({ composer, feed, history, feedRef, overlayO
   );
 
   const { settings } = composer;
+  const promptReady = countWords(settings.prompt) >= PROMPT_MIN_WORDS;
   const generateFromComposer = () => {
-    if (!settings.prompt.trim()) return;
+    if (!promptReady) return;
     run(settings);
   };
 
@@ -174,8 +176,8 @@ export function useWorkspaceActions({ composer, feed, history, feedRef, overlayO
   const buttonState =
     generation.status === 'generating'
       ? 'generating'
-      : !settings.prompt.trim()
-        ? 'empty'
+      : !promptReady
+        ? 'incomplete'
         : justFinished
           ? 'done'
           : 'ready';

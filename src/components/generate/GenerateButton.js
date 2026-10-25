@@ -5,9 +5,10 @@ import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Spinner';
 import { Tooltip } from '@/components/ui/Tooltip';
 import { useModifierKey } from '@/hooks/useModifierKey';
+import { PROMPT_MIN_WORDS } from '@/lib/constants';
 import { cn } from '@/lib/format';
 
-/** @typedef {'ready' | 'empty' | 'generating' | 'done'} GenerateButtonState */
+/** @typedef {'ready' | 'incomplete' | 'generating' | 'done'} GenerateButtonState */
 
 const COMPACT_CLASS = 'size-10 shrink-0 rounded-full px-0';
 
@@ -19,6 +20,7 @@ const COMPACT_CLASS = 'size-10 shrink-0 rounded-full px-0';
  *   state: GenerateButtonState,
  *   onGenerate: () => void,
  *   onCancel: () => void,
+ *   wordsNeeded: number,
  *   compact?: boolean,
  *   hintId?: string,
  * }} props
@@ -27,6 +29,7 @@ export function GenerateButton({
   state,
   onGenerate,
   onCancel,
+  wordsNeeded,
   compact = false,
   hintId = 'generate-hint',
 }) {
@@ -56,16 +59,18 @@ export function GenerateButton({
   }
 
   const hint =
-    state === 'empty'
-      ? 'Describe what you want to create first'
-      : `Generate${mod ? ` · ${mod} ↵` : ''}`;
+    state !== 'incomplete'
+      ? `Generate${mod ? ` · ${mod} ↵` : ''}`
+      : wordsNeeded >= PROMPT_MIN_WORDS
+        ? 'Describe what you want to create first'
+        : `Add ${wordsNeeded} more ${wordsNeeded === 1 ? 'word' : 'words'} to generate`;
   const idleIcon = compact ? <ArrowUp className="size-5" /> : <Sparkles className="size-4" />;
 
   return (
     <Tooltip content={hint} id={hintId}>
       <Button
         size={compact ? 'md' : 'lg'}
-        disabled={state === 'empty'}
+        disabled={state === 'incomplete'}
         aria-label={compact ? 'Generate' : undefined}
         aria-describedby={hintId}
         onClick={onGenerate}

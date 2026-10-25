@@ -1,7 +1,7 @@
 'use client';
 
-import { PROMPT_MAX_LENGTH } from '@/lib/constants';
-import { cn } from '@/lib/format';
+import { PROMPT_MAX_LENGTH, PROMPT_MIN_WORDS } from '@/lib/constants';
+import { cn, countWords } from '@/lib/format';
 import { GenerateButton } from './GenerateButton';
 import { PromptTextarea } from './PromptTextarea';
 
@@ -32,6 +32,8 @@ export function PromptComposer({
 }) {
   const length = value.length;
   const nearLimit = length > PROMPT_MAX_LENGTH * COUNT_WARNING_RATIO;
+  const words = countWords(value);
+  const wordsNeeded = Math.max(0, PROMPT_MIN_WORDS - words);
 
   return (
     <div
@@ -59,9 +61,18 @@ export function PromptComposer({
             nearLimit ? 'text-accent-700' : 'text-ink-500',
           )}
         >
-          {nearLimit ? `${length} / ${PROMPT_MAX_LENGTH}` : length}
+          {wordsNeeded > 0
+            ? `${words}/${PROMPT_MIN_WORDS} words`
+            : nearLimit
+              ? `${length} / ${PROMPT_MAX_LENGTH}`
+              : length}
         </span>
-        <GenerateButton state={buttonState} onGenerate={onGenerate} onCancel={onCancel} />
+        <GenerateButton
+          state={buttonState}
+          wordsNeeded={wordsNeeded}
+          onGenerate={onGenerate}
+          onCancel={onCancel}
+        />
       </div>
     </div>
   );

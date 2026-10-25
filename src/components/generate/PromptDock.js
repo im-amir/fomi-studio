@@ -3,6 +3,8 @@
 import { SlidersHorizontal } from 'lucide-react';
 import { IconButton } from '@/components/ui/IconButton';
 import { getModel } from '@/data/models';
+import { PROMPT_MIN_WORDS } from '@/lib/constants';
+import { countWords } from '@/lib/format';
 import { GenerateButton } from './GenerateButton';
 import { PromptTextarea } from './PromptTextarea';
 
@@ -53,6 +55,7 @@ export function PromptDock({ composer, buttonState, onGenerate, onCancel, onOpen
           compact
           hintId="generate-hint-dock"
           state={buttonState}
+          wordsNeeded={Math.max(0, PROMPT_MIN_WORDS - countWords(settings.prompt))}
           onGenerate={onGenerate}
           onCancel={onCancel}
         />

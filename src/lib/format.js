@@ -41,6 +41,15 @@ export function formatRelativeTime(isoDate, now) {
 }
 
 /**
+ * Words that carry meaning: tokens with at least one letter or digit, so stray
+ * punctuation ("a . .") doesn't count.
+ * @param {string} text
+ */
+export function countWords(text) {
+  return text.split(/\s+/).filter((token) => /[\p{L}\p{N}]/u.test(token)).length;
+}
+
+/**
  * Joins class names, skipping falsy values.
  * @param {...(string | false | null | undefined)} classes
  */

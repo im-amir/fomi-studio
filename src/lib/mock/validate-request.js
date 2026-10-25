@@ -6,12 +6,14 @@ import {
   MODES,
   NEGATIVE_PROMPT_MAX_LENGTH,
   PROMPT_MAX_LENGTH,
+  PROMPT_MIN_WORDS,
   QUALITIES,
   SEED_MAX,
   VIDEO_COUNTS,
 } from '@/lib/constants';
 import { getModel } from '@/data/models';
 import { getStylePreset } from '@/data/style-presets';
+import { countWords } from '@/lib/format';
 
 /** @import { GenerateRequest } from '@/lib/types' */
 
@@ -47,6 +49,9 @@ export function validateGenerateRequest(body) {
 
   const prompt = typeof input.prompt === 'string' ? input.prompt.trim() : '';
   if (!prompt) return invalid('prompt', 'Describe what you want to create.');
+  if (countWords(prompt) < PROMPT_MIN_WORDS) {
+    return invalid('prompt', `Describe it in at least ${PROMPT_MIN_WORDS} words.`);
+  }
   if (prompt.length > PROMPT_MAX_LENGTH) {
     return invalid('prompt', `Keep the prompt under ${PROMPT_MAX_LENGTH} characters.`);
   }

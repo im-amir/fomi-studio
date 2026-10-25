@@ -33,6 +33,8 @@ export const QUALITIES = [
 export const GUIDANCE = { min: 1, max: 20, step: 0.5 };
 export const SEED_MAX = 2 ** 31 - 1;
 export const PROMPT_MAX_LENGTH = 1500;
+// One or two words rarely describe an image well enough to be worth a generation.
+export const PROMPT_MIN_WORDS = 3;
 export const NEGATIVE_PROMPT_MAX_LENGTH = 500;
 
 /** @type {GenerateRequest} */
