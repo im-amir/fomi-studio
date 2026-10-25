@@ -57,7 +57,10 @@ function MediaTileComponent({
 
   return (
     <div
-      className={cn(styles.tile, 'group relative overflow-hidden rounded-media bg-panel-strong')}
+      className={cn(
+        styles.tile,
+        'group @container relative overflow-hidden rounded-media bg-panel-strong',
+      )}
       style={
         /** @type {React.CSSProperties} */ ({
           aspectRatio: `${item.width} / ${item.height}`,
@@ -147,36 +150,39 @@ function MediaTileComponent({
           <Heart className={cn(favorite && 'fill-accent-600 text-accent-600')} />
         </IconButton>
         <div className="pointer-events-auto flex gap-1.5">
-          <IconButton
-            label="Download"
-            variant="overlay"
-            size="sm"
-            tabIndex={-1}
-            onClick={() => onAction('download', item)}
-          >
-            <Download />
-          </IconButton>
-          {!isVideo && (
+          {/* Narrow tiles keep only favourite + open; everything else is in the viewer. */}
+          <div className="flex gap-1.5 @max-[11rem]:hidden">
             <IconButton
-              label={upscaled ? 'Already upscaled' : 'Upscale 2×'}
+              label="Download"
               variant="overlay"
               size="sm"
               tabIndex={-1}
-              disabled={upscaled}
-              onClick={() => onAction('upscale', item)}
+              onClick={() => onAction('download', item)}
             >
-              <ImageUpscale />
+              <Download />
             </IconButton>
-          )}
-          <IconButton
-            label="More like this"
-            variant="overlay"
-            size="sm"
-            tabIndex={-1}
-            onClick={() => onAction('variations', item)}
-          >
-            <Shuffle />
-          </IconButton>
+            {!isVideo && (
+              <IconButton
+                label={upscaled ? 'Already upscaled' : 'Upscale 2×'}
+                variant="overlay"
+                size="sm"
+                tabIndex={-1}
+                disabled={upscaled}
+                onClick={() => onAction('upscale', item)}
+              >
+                <ImageUpscale />
+              </IconButton>
+            )}
+            <IconButton
+              label="More like this"
+              variant="overlay"
+              size="sm"
+              tabIndex={-1}
+              onClick={() => onAction('variations', item)}
+            >
+              <Shuffle />
+            </IconButton>
+          </div>
           <IconButton
             label="Open"
             variant="overlay"
