@@ -8,6 +8,7 @@ import { useModalDialog } from '@/hooks/useModalDialog';
 import { getModel } from '@/data/models';
 import { useNow } from '@/hooks/useNow';
 import { formatRelativeTime } from '@/lib/format';
+import { squareCrop } from '@/lib/media';
 
 /** @import { Batch } from '@/lib/types' */
 
@@ -70,7 +71,9 @@ export default function HistoryDialog({
                     <span className="relative block aspect-square overflow-hidden rounded-media bg-panel-strong">
                       <Image
                         src={
-                          batch.mode === 'video' ? /** @type {string} */ (cover.poster) : cover.src
+                          batch.mode === 'video'
+                            ? /** @type {string} */ (cover.poster)
+                            : squareCrop(cover.src)
                         }
                         alt=""
                         fill

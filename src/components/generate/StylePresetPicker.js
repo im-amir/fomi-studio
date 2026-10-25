@@ -26,7 +26,7 @@ export function StylePresetPicker({ value, onChange }) {
                   src={PREVIEW_SRC}
                   alt=""
                   fill
-                  sizes="24px"
+                  sizes="48px"
                   className={cn('object-cover', styles[preset.id])}
                 />
               </span>

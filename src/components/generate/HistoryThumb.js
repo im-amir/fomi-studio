@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Play } from 'lucide-react';
 import { Tooltip } from '@/components/ui/Tooltip';
 import { cn, truncateWords } from '@/lib/format';
+import { squareCrop } from '@/lib/media';
 
 /** @import { Batch } from '@/lib/types' */
 
@@ -37,7 +38,7 @@ function HistoryThumbComponent({ batch, active, tabIndex, onSelect }) {
         )}
       >
         <Image
-          src={isVideo ? /** @type {string} */ (cover.poster) : cover.src}
+          src={isVideo ? /** @type {string} */ (cover.poster) : squareCrop(cover.src)}
           alt=""
           fill
           sizes="(min-width: 768px) 80px, 64px"
