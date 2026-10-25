@@ -17,7 +17,8 @@ export const IMAGE_PROMPT_SETS = [
     prompt:
       'A professional portrait photograph of a smiling 31-year-old redheaded woman with warm brown eyes and softly tousled auburn hair framing her face. She is turned slightly towards the viewer, offering a genuine and approachable expression. She is wearing a cream-colored cashmere sweater and delicate gold earrings. The background is a softly blurred expanse of muted gray and beige tones, suggesting a modern art gallery. There is subtle directional lighting.',
     model: 'fomi-portrait',
-    keywords: ['portrait', 'woman', 'redhead', 'red hair', 'face', 'girl', 'person', 'freckles'],
+    // No generic 'portrait': it describes framing, not subject ("a cat portrait" is a cat).
+    keywords: ['woman', 'redhead', 'red hair', 'face', 'girl', 'freckles', 'auburn'],
   },
   {
     key: 'mountains',
