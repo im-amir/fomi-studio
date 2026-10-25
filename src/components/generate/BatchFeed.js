@@ -25,6 +25,7 @@ import { PendingRow } from './PendingRow';
  *   onRetry: () => void,
  *   onDismissError: () => void,
  *   onPickPrompt: (prompt: string) => void,
+ *   emptyComposer?: React.ReactNode,
  * }} props
  */
 export function BatchFeed({
@@ -41,9 +42,10 @@ export function BatchFeed({
   onRetry,
   onDismissError,
   onPickPrompt,
+  emptyComposer,
 }) {
   if (batches.length === 0 && generation.status === 'idle') {
-    return <EmptyState onPickPrompt={onPickPrompt} />;
+    return <EmptyState onPickPrompt={onPickPrompt} composer={emptyComposer} />;
   }
 
   return (

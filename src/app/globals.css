@@ -68,3 +68,19 @@
 html:has(dialog[open]) {
   overflow: hidden;
 }
+
+/* The prompt moving between the centre of an empty canvas and the side panel
+   (React <ViewTransition share="morph">). Same easing as everything else. */
+::view-transition-group(.morph) {
+  animation-duration: var(--duration-slow);
+  animation-timing-function: var(--ease-standard);
+}
+
+/* `*` above doesn't reach view-transition pseudo-elements, so switch them off here. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

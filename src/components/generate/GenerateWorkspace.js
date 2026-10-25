@@ -1,6 +1,14 @@
 'use client';
 
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  Suspense,
+  startTransition,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import dynamic from 'next/dynamic';
 import { PrimaryNav } from '@/components/shared/PrimaryNav';
 import { TopBar } from '@/components/shared/TopBar';
@@ -9,9 +17,11 @@ import { useCanvasFeed } from '@/hooks/useCanvasFeed';
 import { useComposerSettings } from '@/hooks/useComposerSettings';
 import { useHistory } from '@/hooks/useHistory';
 import { useHotkeys } from '@/hooks/useHotkeys';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { BatchFeed } from './BatchFeed';
 import { ControlPanel } from './ControlPanel';
 import { HistoryStrip } from './HistoryStrip';
+import { PromptComposer } from './PromptComposer';
 import { PromptDock } from './PromptDock';
 import { useWorkspaceActions } from './useWorkspaceActions';
 
@@ -48,6 +58,10 @@ function Workspace({ initialHistory }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   // Desktop only: fold the settings panel to a rail so the results get the width.
   const [panelCollapsed, setPanelCollapsed] = useState(false);
+  // After the prompt has moved once (centre ↔ panel), each new mount takes focus so you
+  // can keep typing; the first page load doesn't steal focus.
+  const [composerMoved, setComposerMoved] = useState(false);
+  const isDesktop = useMediaQuery('(min-width: 1024px)', true);
   /** @type {React.RefObject<HTMLElement | null>} */
   const feedRef = useRef(null);
 
@@ -58,11 +72,30 @@ function Workspace({ initialHistory }) {
     feedRef,
     overlayOpen: viewerItemId !== null || historyOpen || settingsOpen,
     showComposer: () => setPanelCollapsed(false),
+    onComposerMove: () => setComposerMoved(true),
   });
 
   useHotkeys(
     { 'mod+\\': () => setPanelCollapsed((collapsed) => !collapsed) },
     { enabled: viewerItemId === null && !historyOpen && !settingsOpen },
+  );
+
+  // Desktop, empty canvas: the prompt is the hero, so it sits in the centre. Once there's
+  // work on the canvas it moves to the panel and the results take the centre.
+  const composerInCentre =
+    isDesktop && feed.batches.length === 0 && actions.generation.status === 'idle';
+
+  const { remove: removeBatch } = feed;
+  const batchCount = feed.batches.length;
+  const hideBatch = useCallback(
+    /** @param {string} id */ (id) => {
+      // Hiding the last batch sends the prompt back to the centre; animate that move.
+      startTransition(() => {
+        if (batchCount === 1) setComposerMoved(true);
+        removeBatch(id);
+      });
+    },
+    [batchCount, removeBatch],
   );
 
   const viewerItems = useMemo(() => feed.batches.flatMap((batch) => batch.items), [feed.batches]);
@@ -113,6 +146,8 @@ function Workspace({ initialHistory }) {
             onGenerate={actions.generateFromComposer}
             onCancel={actions.cancel}
             collapsed={panelCollapsed}
+            showComposer={!composerInCentre}
+            autoFocusPrompt={composerMoved}
             onCollapsedChange={setPanelCollapsed}
             className="lg:mt-30 lg:mb-6 lg:overflow-y-auto"
           />
@@ -138,10 +173,23 @@ function Workspace({ initialHistory }) {
               onAction={actions.handleTileAction}
               onCopyPrompt={actions.copyPrompt}
               onReuse={actions.reuse}
-              onHide={feed.remove}
+              onHide={hideBatch}
               onRetry={actions.retry}
               onDismissError={actions.dismissError}
               onPickPrompt={actions.pickPrompt}
+              emptyComposer={
+                composerInCentre && (
+                  <PromptComposer
+                    id="prompt"
+                    value={composer.settings.prompt}
+                    onChange={composer.setPrompt}
+                    buttonState={actions.buttonState}
+                    onGenerate={actions.generateFromComposer}
+                    onCancel={actions.cancel}
+                    autoFocus={composerMoved}
+                  />
+                )
+              }
             />
           </main>
         </div>

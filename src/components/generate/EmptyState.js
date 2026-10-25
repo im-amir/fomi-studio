@@ -4,13 +4,15 @@ import { ArrowUpRight } from 'lucide-react';
 import { Kbd } from '@/components/ui/Kbd';
 import { EXAMPLE_PROMPTS } from '@/data/prompt-sets';
 import { useModifierKey } from '@/hooks/useModifierKey';
+import { cn } from '@/lib/format';
 
 /**
  * Shown when the canvas has nothing on it. Offers concrete starting points instead of a
  * blank area; picking one fills the prompt (it doesn't spend a generation).
- * @param {{ onPickPrompt: (prompt: string) => void }} props
+ * On desktop the prompt itself sits here (`composer`), so the first screen is all input.
+ * @param {{ onPickPrompt: (prompt: string) => void, composer?: React.ReactNode }} props
  */
-export function EmptyState({ onPickPrompt }) {
+export function EmptyState({ onPickPrompt, composer }) {
   const mod = useModifierKey();
 
   return (
@@ -22,11 +24,20 @@ export function EmptyState({ onPickPrompt }) {
       <h2 id="empty-title" className="mt-2 font-display text-2xl text-balance text-ink-900">
         What will you make today?
       </h2>
-      <p className="mt-3 text-base text-pretty text-ink-600">
-        Describe a subject, the light and the mood. Start from one of these, or pick up past work
-        from your history above.
-      </p>
-      <ul className="mt-8 flex w-full flex-col gap-2">
+      {composer ? (
+        <div className="mt-8 w-full text-left">{composer}</div>
+      ) : (
+        <p className="mt-3 text-base text-pretty text-ink-600">
+          Describe a subject, the light and the mood. Start from one of these, or pick up past work
+          from your history above.
+        </p>
+      )}
+      {composer && (
+        <p className="mt-8 self-start text-sm font-medium text-ink-500">
+          Or start from one of these
+        </p>
+      )}
+      <ul className={cn('flex w-full flex-col gap-2', composer ? 'mt-3' : 'mt-8')}>
         {EXAMPLE_PROMPTS.map((example) => (
           <li key={example.label}>
             <button

@@ -23,7 +23,8 @@ export const MODE_OPTIONS = MODES.map((mode) => ({ ...mode, icon: MODE_ICONS[mod
  * (write | tune) above them on tablets. Phones use the docked composer instead.
  *
  * On desktop it can collapse to a slim rail (Show settings + Generate) so the results
- * get the width; the full panel stays for tablets either way.
+ * get the width; the full panel stays for tablets either way. While the canvas is empty
+ * on desktop, the prompt lives in the centre instead (`showComposer` false).
  * @param {{
  *   composer: ComposerSettings,
  *   buttonState: GenerateButtonState,
@@ -31,6 +32,8 @@ export const MODE_OPTIONS = MODES.map((mode) => ({ ...mode, icon: MODE_ICONS[mod
  *   onCancel: () => void,
  *   collapsed: boolean,
  *   onCollapsedChange: (collapsed: boolean) => void,
+ *   showComposer: boolean,
+ *   autoFocusPrompt: boolean,
  *   className?: string,
  * }} props
  */
@@ -41,6 +44,8 @@ export function ControlPanel({
   onCancel,
   collapsed,
   onCollapsedChange,
+  showComposer,
+  autoFocusPrompt,
   className,
 }) {
   const { settings, setMode, setPrompt } = composer;
@@ -75,14 +80,17 @@ export function ControlPanel({
               <PanelLeftClose />
             </IconButton>
           </div>
-          <PromptComposer
-            id="prompt"
-            value={settings.prompt}
-            onChange={setPrompt}
-            buttonState={buttonState}
-            onGenerate={onGenerate}
-            onCancel={onCancel}
-          />
+          {showComposer && (
+            <PromptComposer
+              id="prompt"
+              value={settings.prompt}
+              onChange={setPrompt}
+              buttonState={buttonState}
+              onGenerate={onGenerate}
+              onCancel={onCancel}
+              autoFocus={autoFocusPrompt}
+            />
+          )}
         </div>
         <GenerationSettings composer={composer} />
       </aside>

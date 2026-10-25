@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { startTransition, useCallback, useEffect, useRef, useState } from 'react';
 import { useToast } from '@/components/ui/Toaster';
 import { useGenerate } from '@/hooks/useGenerate';
 import { useHotkeys } from '@/hooks/useHotkeys';
@@ -35,6 +35,7 @@ function describeRun({ mode, count }) {
  *   feedRef: React.RefObject<HTMLElement | null>,
  *   overlayOpen: boolean,
  *   showComposer: () => void,
+ *   onComposerMove: () => void,
  * }} params
  */
 export function useWorkspaceActions({
@@ -44,6 +45,7 @@ export function useWorkspaceActions({
   feedRef,
   overlayOpen,
   showComposer,
+  onComposerMove,
 }) {
   const toast = useToast();
   const { state: generation, generate, cancel: cancelGeneration, dismissError } = useGenerate();
@@ -83,7 +85,15 @@ export function useWorkspaceActions({
       }
       setJustFinished(false);
       setAnnouncement(`Generating ${describeRun(request)}…`);
-      const batch = await generate(request);
+      // In a transition so React's <ViewTransition> can morph the prompt from the centre of
+      // an empty canvas into the panel as the first results take its place.
+      /** @type {Promise<import('@/lib/types').Batch | null>} */
+      let pending = Promise.resolve(null);
+      startTransition(() => {
+        onComposerMove();
+        pending = generate(request);
+      });
+      const batch = await pending;
       if (!batch) return;
       addToFeed(batch);
       prependHistory(batch);
@@ -91,7 +101,7 @@ export function useWorkspaceActions({
       setJustFinished(true);
       later(() => setJustFinished(false), DONE_FLASH_MS);
     },
-    [generate, addToFeed, prependHistory, feedRef, later],
+    [generate, addToFeed, prependHistory, feedRef, later, onComposerMove],
   );
 
   const { settings } = composer;

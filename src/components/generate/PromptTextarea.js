@@ -1,6 +1,6 @@
 'use client';
 
-import { useLayoutEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { PROMPT_MAX_LENGTH } from '@/lib/constants';
 import { cn } from '@/lib/format';
 
@@ -16,6 +16,7 @@ import { cn } from '@/lib/format';
  *   rows: number,
  *   maxHeight: number,
  *   placeholder?: string,
+ *   autoFocus?: boolean,
  *   className?: string,
  * }} props
  */
@@ -27,6 +28,7 @@ export function PromptTextarea({
   rows,
   maxHeight,
   placeholder = 'Describe what you imagine — the subject, the light, the mood…',
+  autoFocus = false,
   className,
 }) {
   /** @type {React.RefObject<HTMLTextAreaElement | null>} */
@@ -38,6 +40,14 @@ export function PromptTextarea({
     textarea.style.height = 'auto';
     textarea.style.height = `${Math.min(textarea.scrollHeight, maxHeight)}px`;
   }, [value, maxHeight]);
+
+  // When the composer moves (centre ↔ panel) it remounts; keep the caret with it.
+  useEffect(() => {
+    const textarea = ref.current;
+    if (!autoFocus || !textarea) return;
+    textarea.focus({ preventScroll: true });
+    textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+  }, [autoFocus]);
 
   return (
     <>
