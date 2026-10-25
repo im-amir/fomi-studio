@@ -42,6 +42,8 @@ function HistoryThumbComponent({ batch, active, tabIndex, onSelect }) {
           alt=""
           fill
           sizes="(min-width: 768px) 80px, 64px"
+          // Thumbnails compete with the results for bandwidth; the results are the LCP.
+          fetchPriority="low"
           placeholder={cover.blurDataURL ? 'blur' : 'empty'}
           blurDataURL={cover.blurDataURL}
           className="object-cover"
