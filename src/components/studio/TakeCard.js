@@ -48,6 +48,7 @@ function ChangeChip({ changes }) {
  *   y: number,
  *   picks: Set<string>,
  *   rejects: Set<string>,
+ *   compareIds: string[],
  *   branchSources: Set<string>,
  *   selectedImageId: string | null,
  *   onSelectImage: (imageId: string) => void,
@@ -62,6 +63,7 @@ function TakeCardComponent({
   y,
   picks,
   rejects,
+  compareIds,
   branchSources,
   selectedImageId,
   onSelectImage,
@@ -117,6 +119,12 @@ function TakeCardComponent({
                 {picked && (
                   <span className="absolute top-1.5 right-1.5 inline-flex size-5 items-center justify-center rounded-full bg-surface/90 shadow-sm">
                     <Heart aria-hidden="true" className="size-3 fill-accent-600 text-accent-600" />
+                  </span>
+                )}
+                {compareIds.includes(item.id) && (
+                  <span className="absolute top-1.5 left-1.5 inline-flex size-5 items-center justify-center rounded-full bg-accent-600 text-2xs font-semibold text-on-accent">
+                    <span className="sr-only">Comparing, </span>
+                    {compareIds.indexOf(item.id) + 1}
                   </span>
                 )}
                 {branchSources.has(item.id) && (

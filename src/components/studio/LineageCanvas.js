@@ -3,12 +3,13 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { GitBranch } from 'lucide-react';
 import { cn } from '@/lib/format';
-import { LAYOUT, layoutLineage } from '@/lib/studio/layout';
+import { LAYOUT } from '@/lib/studio/layout';
 import { diffRecipe } from '@/lib/studio/recipe';
 import styles from './LineageCanvas.module.css';
 import { TakeCard } from './TakeCard';
 
-/** @import { StudioProject, Take } from '@/lib/studio/types' */
+/** @import { StudioProject } from '@/lib/studio/types' */
+/** @typedef {ReturnType<typeof import('@/lib/studio/layout').layoutLineage>} LineageLayout */
 
 /**
  * The project as a family tree laid out in lanes: one row per branch, time flowing
@@ -16,24 +17,29 @@ import { TakeCard } from './TakeCard';
  * how a result came to be. Opens centred on the newest take.
  * @param {{
  *   project: StudioProject,
+ *   layout: LineageLayout,
  *   picks: Set<string>,
  *   rejects: Set<string>,
+ *   compareIds: string[],
  *   selectedImageId: string | null,
  *   onSelectImage: (imageId: string) => void,
+ *   takeLabel: (takeId: string) => string,
  *   className?: string,
  * }} props
  */
 export function LineageCanvas({
   project,
+  layout,
   picks,
   rejects,
+  compareIds,
   selectedImageId,
   onSelectImage,
+  takeLabel,
   className,
 }) {
   /** @type {React.RefObject<HTMLDivElement | null>} */
   const scrollerRef = useRef(null);
-  const layout = useMemo(() => layoutLineage(project), [project]);
 
   const takeById = useMemo(
     () => new Map(project.takes.map((take) => [take.id, take])),
@@ -60,8 +66,13 @@ export function LineageCanvas({
     });
   }, [layout, newestTakeId]);
 
-  /** @param {Take} take */
-  const labelOf = (take) => `T${project.takes.indexOf(take) + 1}`;
+  // Keep the selection in view as it moves with the keyboard.
+  useEffect(() => {
+    if (!selectedImageId) return;
+    scrollerRef.current
+      ?.querySelector(`[data-image-id="${selectedImageId}"]`)
+      ?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+  }, [selectedImageId]);
 
   return (
     <div
@@ -103,7 +114,7 @@ export function LineageCanvas({
                 {origin && (
                   <span className="flex items-center gap-1 pl-4.5 text-xs text-ink-500">
                     <GitBranch aria-hidden="true" className="size-3" />
-                    from {labelOf(origin)}
+                    from {takeLabel(origin.id)}
                   </span>
                 )}
               </li>
@@ -135,13 +146,14 @@ export function LineageCanvas({
             <TakeCard
               key={take.id}
               take={take}
-              label={labelOf(take)}
+              label={takeLabel(take.id)}
               hue={hueOf.get(take.branchId) ?? 1}
               changes={diffRecipe(parent?.recipe ?? null, take.recipe)}
               x={box.x}
               y={box.y}
               picks={picks}
               rejects={rejects}
+              compareIds={compareIds}
               branchSources={branchSources}
               selectedImageId={selectedImageId}
               onSelectImage={onSelectImage}
