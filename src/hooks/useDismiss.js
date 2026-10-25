@@ -20,6 +20,9 @@ export function useDismiss(open, refs, onDismiss) {
   const handleKeyDown = useEffectEvent(
     /** @param {KeyboardEvent} event */ (event) => {
       if (event.key !== 'Escape') return;
+      // preventDefault too: inside a modal <dialog>, Escape's default action closes the
+      // whole dialog, not just this popover.
+      event.preventDefault();
       event.stopPropagation();
       onDismiss('escape');
     },
