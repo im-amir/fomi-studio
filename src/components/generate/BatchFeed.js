@@ -13,7 +13,6 @@ import { PendingRow } from './PendingRow';
  * Newest first: the in-flight (or failed) run sits on top where its results will land.
  * @param {{
  *   batches: Batch[],
- *   initialIds: Set<string>,
  *   generation: GenerateState,
  *   highlightedId: string | null,
  *   favorites: Set<string>,
@@ -30,7 +29,6 @@ import { PendingRow } from './PendingRow';
  */
 export function BatchFeed({
   batches,
-  initialIds,
   generation,
   highlightedId,
   favorites,
@@ -68,7 +66,6 @@ export function BatchFeed({
           highlighted={batch.id === highlightedId}
           // The first two batches are above the fold on desktop; either can hold the LCP.
           eager={index < 2}
-          reveal={!initialIds.has(batch.id)}
           prioritize={index === 0}
           favorites={favorites}
           upscaled={upscaled}

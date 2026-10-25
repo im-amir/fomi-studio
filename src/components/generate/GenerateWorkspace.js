@@ -26,7 +26,7 @@ const SettingsSheet = dynamic(() => import('./SettingsSheet'));
  * Part A: the generation workspace from the FOMI mockup.
  * Desktop is an app shell — top bar and history strip stay put, the settings panel stays
  * in reach, and only the results scroll (under the strip, as in the mockup).
- * @param {{ initialHistory: HistoryPage, initialFeedSize: number }} props
+ * @param {{ initialHistory: HistoryPage }} props
  */
 export function GenerateWorkspace(props) {
   return (
@@ -36,11 +36,13 @@ export function GenerateWorkspace(props) {
   );
 }
 
-/** @param {{ initialHistory: HistoryPage, initialFeedSize: number }} props */
-function Workspace({ initialHistory, initialFeedSize }) {
+/** @param {{ initialHistory: HistoryPage }} props */
+function Workspace({ initialHistory }) {
   const composer = useComposerSettings();
   const history = useHistory(initialHistory);
-  const feed = useCanvasFeed(initialHistory.items.slice(0, initialFeedSize));
+  // The main area is for this session's work; past runs live in the history strip
+  // and open here when picked, so nothing on screen is shown twice.
+  const feed = useCanvasFeed([]);
   const [viewerItemId, setViewerItemId] = useState(/** @type {string | null} */ (null));
   const [historyOpen, setHistoryOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -128,7 +130,6 @@ function Workspace({ initialHistory, initialFeedSize }) {
             <h1 className="sr-only">Create</h1>
             <BatchFeed
               batches={feed.batches}
-              initialIds={feed.initialIds}
               generation={actions.generation}
               highlightedId={feed.highlightedId}
               favorites={feed.favorites}

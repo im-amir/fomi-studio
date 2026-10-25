@@ -18,7 +18,6 @@ export const ROW_CLASS = 'grid gap-4 xl:grid-cols-[minmax(13rem,17.25rem)_minmax
  *   batch: Batch,
  *   highlighted: boolean,
  *   eager: boolean,
- *   reveal: boolean,
  *   prioritize: boolean,
  *   favorites: Set<string>,
  *   upscaled: Set<string>,
@@ -33,7 +32,6 @@ function BatchRowComponent({
   batch,
   highlighted,
   eager,
-  reveal,
   prioritize,
   favorites,
   upscaled,
@@ -66,7 +64,6 @@ function BatchRowComponent({
         items={batch.items}
         label={`${batch.items.length} results`}
         eager={eager}
-        reveal={reveal}
         prioritizeFirstRow={prioritize}
         favorites={favorites}
         upscaled={upscaled}

@@ -13,9 +13,6 @@ const HIGHLIGHT_MS = 1400;
  */
 export function useCanvasFeed(initialBatches) {
   const [batches, setBatches] = useState(initialBatches);
-  // Batches in the first server render are painted immediately (no fade), so they count
-  // for LCP; only results that arrive later animate in.
-  const [initialIds] = useState(() => new Set(initialBatches.map((batch) => batch.id)));
   const [favorites, setFavorites] = useState(() => new Set(/** @type {string[]} */ ([])));
   const [upscaled, setUpscaled] = useState(() => new Set(/** @type {string[]} */ ([])));
   const [highlightedId, setHighlightedId] = useState(/** @type {string | null} */ (null));
@@ -83,7 +80,6 @@ export function useCanvasFeed(initialBatches) {
 
   return {
     batches,
-    initialIds,
     favorites,
     upscaled,
     highlightedId,
