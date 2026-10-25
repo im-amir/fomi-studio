@@ -3,9 +3,12 @@
  * Tailwind v4 turns every variable in @theme into a utility (bg-canvas, text-ink-600, rounded-panel…).
  * Default palettes and type sizes are cleared so components can only use these tokens.
  * Contrast ratios (WCAG 2.2) are noted next to text colors; see README for the full table.
+ *
+ * `static`: Tailwind normally emits only variables some utility uses, but tokens are
+ * also read from CSS Modules and inline styles (lane colours, easing), so emit them all.
  */
 
-@theme {
+@theme static {
   --color-*: initial;
   --color-transparent: transparent;
   --color-current: currentColor;
