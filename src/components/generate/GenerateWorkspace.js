@@ -22,7 +22,9 @@ import { BatchFeed } from './BatchFeed';
 import { ControlPanel } from './ControlPanel';
 import { HistoryStrip } from './HistoryStrip';
 import { PromptComposer } from './PromptComposer';
-import { PromptDock } from './PromptDock';
+import { PromptDock, settingsSummary } from './PromptDock';
+import { SlidersHorizontal } from 'lucide-react';
+import { IconButton } from '@/components/ui/IconButton';
 import { useWorkspaceActions } from './useWorkspaceActions';
 
 /** @import { HistoryPage } from '@/lib/types' */
@@ -61,7 +63,10 @@ function Workspace({ initialHistory }) {
   // After the prompt has moved once (centre ↔ panel), each new mount takes focus so you
   // can keep typing; the first page load doesn't steal focus.
   const [composerMoved, setComposerMoved] = useState(false);
-  const isDesktop = useMediaQuery('(min-width: 1024px)', true);
+  const isPhone = useMediaQuery('(max-width: 767px)');
+  // Moving focus on a touch screen pops the keyboard over the results, so only follow the
+  // prompt with focus when there's a real pointer (and likely a keyboard).
+  const finePointer = useMediaQuery('(pointer: fine)', true);
   /** @type {React.RefObject<HTMLElement | null>} */
   const feedRef = useRef(null);
 
@@ -80,10 +85,11 @@ function Workspace({ initialHistory }) {
     { enabled: viewerItemId === null && !historyOpen && !settingsOpen },
   );
 
-  // Desktop, empty canvas: the prompt is the hero, so it sits in the centre. Once there's
-  // work on the canvas it moves to the panel and the results take the centre.
-  const composerInCentre =
-    isDesktop && feed.batches.length === 0 && actions.generation.status === 'idle';
+  // Empty canvas: the prompt is the hero, so it sits in the centre. Once there's work on the
+  // canvas it moves to the panel (phone: the dock) and the results take the centre.
+  // Exactly one composer is mounted at a time, which is what lets it morph between spots.
+  const composerInCentre = feed.batches.length === 0 && actions.generation.status === 'idle';
+  const followFocus = composerMoved && finePointer;
 
   const { remove: removeBatch } = feed;
   const batchCount = feed.batches.length;
@@ -133,7 +139,7 @@ function Workspace({ initialHistory }) {
         />
 
         <div
-          className="mt-4 grid gap-6 lg:mt-0 lg:h-full lg:grid-cols-[var(--panel-width)_minmax(0,1fr)] lg:gap-7 lg:transition-[grid-template-columns] lg:duration-slow"
+          className="mt-4 grid grid-cols-[minmax(0,1fr)] gap-6 lg:mt-0 lg:h-full lg:grid-cols-[var(--panel-width)_minmax(0,1fr)] lg:gap-7 lg:transition-[grid-template-columns] lg:duration-slow"
           style={
             /** @type {React.CSSProperties} */ ({
               '--panel-width': panelCollapsed ? '3.5rem' : '18.75rem',
@@ -146,8 +152,8 @@ function Workspace({ initialHistory }) {
             onGenerate={actions.generateFromComposer}
             onCancel={actions.cancel}
             collapsed={panelCollapsed}
-            showComposer={!composerInCentre}
-            autoFocusPrompt={composerMoved}
+            showComposer={!composerInCentre && !isPhone}
+            autoFocusPrompt={followFocus}
             onCollapsedChange={setPanelCollapsed}
             className="lg:mt-30 lg:mb-6 lg:overflow-y-auto"
           />
@@ -186,7 +192,19 @@ function Workspace({ initialHistory }) {
                     buttonState={actions.buttonState}
                     onGenerate={actions.generateFromComposer}
                     onCancel={actions.cancel}
-                    autoFocus={composerMoved}
+                    autoFocus={followFocus}
+                    footerStart={
+                      // Desktop keeps the settings panel beside the prompt; smaller screens
+                      // hide it while the prompt is centred and open the sheet instead.
+                      <IconButton
+                        label={`Settings: ${settingsSummary(composer.settings)}`}
+                        size="sm"
+                        onClick={() => setSettingsOpen(true)}
+                        className="lg:hidden"
+                      >
+                        <SlidersHorizontal />
+                      </IconButton>
+                    }
                   />
                 )
               }
@@ -195,13 +213,15 @@ function Workspace({ initialHistory }) {
         </div>
       </div>
 
-      <PromptDock
-        composer={composer}
-        buttonState={actions.buttonState}
-        onGenerate={actions.generateFromComposer}
-        onCancel={actions.cancel}
-        onOpenSettings={() => setSettingsOpen(true)}
-      />
+      {isPhone && !composerInCentre && (
+        <PromptDock
+          composer={composer}
+          buttonState={actions.buttonState}
+          onGenerate={actions.generateFromComposer}
+          onCancel={actions.cancel}
+          onOpenSettings={() => setSettingsOpen(true)}
+        />
+      )}
 
       <p role="status" aria-live="polite" className="sr-only">
         {actions.announcement}

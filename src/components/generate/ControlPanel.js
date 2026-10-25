@@ -23,8 +23,9 @@ export const MODE_OPTIONS = MODES.map((mode) => ({ ...mode, icon: MODE_ICONS[mod
  * (write | tune) above them on tablets. Phones use the docked composer instead.
  *
  * On desktop it can collapse to a slim rail (Show settings + Generate) so the results
- * get the width; the full panel stays for tablets either way. While the canvas is empty
- * on desktop, the prompt lives in the centre instead (`showComposer` false).
+ * get the width; the full panel stays for tablets either way. While the canvas is empty the
+ * prompt lives in the centre instead (`showComposer` false); tablets then hide the panel
+ * and reach settings through the centred prompt.
  * @param {{
  *   composer: ComposerSettings,
  *   buttonState: GenerateButtonState,
@@ -57,6 +58,7 @@ export function ControlPanel({
         className={cn(
           'flex flex-col gap-4 rounded-panel bg-panel p-4 max-md:hidden md:max-lg:grid md:max-lg:grid-cols-2 md:max-lg:items-start md:max-lg:gap-6 md:max-lg:p-5',
           collapsed && 'lg:hidden',
+          !showComposer && 'md:max-lg:hidden',
           className,
         )}
       >

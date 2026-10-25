@@ -13,9 +13,9 @@ const COUNT_WARNING_RATIO = 0.9;
 /**
  * Prompt field with the Generate action inside it, as in the mockup.
  *
- * Named for React's <ViewTransition>: on desktop it lives in the centre of an empty canvas
- * and in the side panel once there are results; rendering it in only one place at a time
- * lets the browser morph it from one spot to the other.
+ * Named for React's <ViewTransition>: it lives in the centre of an empty canvas and moves
+ * to the panel (or the phone dock) once there are results; rendering it in only one place
+ * at a time lets the browser morph it from one spot to the other.
  * @param {{
  *   id: string,
  *   value: string,
@@ -24,6 +24,7 @@ const COUNT_WARNING_RATIO = 0.9;
  *   onGenerate: () => void,
  *   onCancel: () => void,
  *   autoFocus?: boolean,
+ *   footerStart?: React.ReactNode,
  *   className?: string,
  * }} props
  */
@@ -35,6 +36,7 @@ export function PromptComposer({
   onGenerate,
   onCancel,
   autoFocus = false,
+  footerStart,
   className,
 }) {
   const length = value.length;
@@ -62,10 +64,11 @@ export function PromptComposer({
           className="min-h-32 px-4 pt-3.5"
         />
         <div className="flex items-end justify-between gap-3 px-3 pt-1 pb-3">
+          {footerStart}
           <span
             aria-hidden="true"
             className={cn(
-              'pb-1 pl-1 text-2xs tabular-nums transition-opacity duration-fast',
+              'mr-auto pb-1 pl-1 text-2xs tabular-nums transition-opacity duration-fast',
               length === 0 ? 'opacity-0' : 'opacity-100',
               nearLimit ? 'text-accent-700' : 'text-ink-500',
             )}
