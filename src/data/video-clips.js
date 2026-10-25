@@ -1,6 +1,7 @@
 /**
  * Sample clips for video mode (Mixkit free license), stored in /public so the demo
- * never depends on a third-party host. Posters were extracted at 1s with ffmpeg.
+ * never depends on a third-party host. Posters are the frame at 1s, saved as 640px and 320px WebP
+ * (the image loader picks the smaller one for thumbnails).
  *
  * @typedef {object} VideoClip
  * @property {string} id
@@ -18,7 +19,7 @@ export const VIDEO_CLIPS = [
   {
     id: 'mixkit-10050',
     src: '/media/video/mixkit-10050.mp4',
-    poster: '/media/video/mixkit-10050.jpg',
+    poster: '/media/video/mixkit-10050-640.webp',
     width: 640,
     height: 360,
     duration: 12.96,
@@ -28,7 +29,7 @@ export const VIDEO_CLIPS = [
   {
     id: 'mixkit-14911',
     src: '/media/video/mixkit-14911.mp4',
-    poster: '/media/video/mixkit-14911.jpg',
+    poster: '/media/video/mixkit-14911-640.webp',
     width: 640,
     height: 360,
     duration: 20.92,
@@ -38,7 +39,7 @@ export const VIDEO_CLIPS = [
   {
     id: 'mixkit-4756',
     src: '/media/video/mixkit-4756.mp4',
-    poster: '/media/video/mixkit-4756.jpg',
+    poster: '/media/video/mixkit-4756-640.webp',
     width: 640,
     height: 360,
     duration: 5.84,
