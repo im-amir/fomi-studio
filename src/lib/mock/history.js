@@ -11,68 +11,83 @@ const HISTORY_ANCHOR = Date.parse('2026-10-25T09:00:00Z');
 const HOUR = 3_600_000;
 const ITEMS_PER_BATCH = 4;
 
-/** @type {AspectRatioId[]} */
-const RATIO_ROTATION = ['4:5', '1:1', '3:4'];
+/**
+ * Newest first. The two most recent runs are the portrait set at 2:3 — the screen the
+ * FOMI mockup shows — so a returning user lands on that work.
+ * @type {({ kind: 'image', set: string, round: number, aspectRatio: AspectRatioId }
+ *   | { kind: 'video', clip: number })[]}
+ */
+const PLAN = [
+  { kind: 'image', set: 'portrait', round: 1, aspectRatio: '2:3' },
+  { kind: 'image', set: 'portrait', round: 0, aspectRatio: '2:3' },
+  { kind: 'image', set: 'cats', round: 0, aspectRatio: '4:5' },
+  { kind: 'video', clip: 0 },
+  { kind: 'image', set: 'paris', round: 0, aspectRatio: '2:3' },
+  { kind: 'image', set: 'neon', round: 0, aspectRatio: '9:16' },
+  { kind: 'image', set: 'forest', round: 0, aspectRatio: '1:1' },
+  { kind: 'image', set: 'mountains', round: 0, aspectRatio: '16:9' },
+  { kind: 'image', set: 'cats', round: 1, aspectRatio: '1:1' },
+  { kind: 'video', clip: 2 },
+  { kind: 'image', set: 'neon', round: 1, aspectRatio: '2:3' },
+  { kind: 'image', set: 'paris', round: 1, aspectRatio: '4:5' },
+  { kind: 'image', set: 'forest', round: 1, aspectRatio: '2:3' },
+  { kind: 'image', set: 'mountains', round: 1, aspectRatio: '3:4' },
+];
 
 /** @returns {Batch[]} */
 function buildHistory() {
-  /** @type {Batch[]} */
-  const batches = [];
-  let step = 0;
-  const nextDate = () => new Date(HISTORY_ANCHOR - step++ * 5 * HOUR).toISOString();
+  return PLAN.map((entry, step) => {
+    const createdAt = new Date(HISTORY_ANCHOR - step * 5 * HOUR).toISOString();
 
-  for (const round of [0, 1]) {
-    for (const set of IMAGE_PROMPT_SETS) {
-      const id = `hist-${set.key}-${round}`;
-      const createdAt = nextDate();
-      const aspectRatio = RATIO_ROTATION[(batches.length + round) % RATIO_ROTATION.length];
-      const photoIds = getSetPhotoIds(set.key);
-      const items = Array.from({ length: ITEMS_PER_BATCH }, (_, index) => {
-        const photoId = photoIds[(round * ITEMS_PER_BATCH + index) % photoIds.length];
-        return createImageGeneration(photoId, {
+    if (entry.kind === 'video') {
+      const clip = VIDEO_CLIPS[entry.clip];
+      const id = `hist-video-${entry.clip}`;
+      return {
+        id,
+        prompt: clip.prompt,
+        mode: 'video',
+        model: 'fomi-cinematic',
+        style: null,
+        aspectRatio: '16:9',
+        createdAt,
+        items: [0, 1].map((index) =>
+          createVideoGeneration(VIDEO_CLIPS[(entry.clip + index) % VIDEO_CLIPS.length], {
+            id: `${id}-${index}`,
+            prompt: clip.prompt,
+            model: 'fomi-cinematic',
+            seed: 2_000_000 + step * 13 + index,
+            aspectRatio: '16:9',
+            createdAt,
+          }),
+        ),
+      };
+    }
+
+    const set = /** @type {import('@/data/prompt-sets').PromptSet} */ (
+      IMAGE_PROMPT_SETS.find((candidate) => candidate.key === entry.set)
+    );
+    const id = `hist-${set.key}-${entry.round}`;
+    const photoIds = getSetPhotoIds(set.key);
+    return {
+      id,
+      prompt: set.prompt,
+      mode: 'image',
+      model: set.model,
+      style: null,
+      aspectRatio: entry.aspectRatio,
+      createdAt,
+      items: Array.from({ length: ITEMS_PER_BATCH }, (_, index) =>
+        createImageGeneration(photoIds[(entry.round * ITEMS_PER_BATCH + index) % photoIds.length], {
           id: `${id}-${index}`,
           prompt: set.prompt,
           model: set.model,
           seed: 1_000_000 + step * 97 + index,
-          aspectRatio,
-          createdAt,
-        });
-      });
-      batches.push({
-        id,
-        prompt: set.prompt,
-        mode: 'image',
-        model: set.model,
-        style: null,
-        aspectRatio,
-        createdAt,
-        items,
-      });
-    }
-    const clip = VIDEO_CLIPS[round];
-    const id = `hist-video-${round}`;
-    const createdAt = nextDate();
-    batches.push({
-      id,
-      prompt: clip.prompt,
-      mode: 'video',
-      model: 'fomi-cinematic',
-      style: null,
-      aspectRatio: '16:9',
-      createdAt,
-      items: [0, 1].map((index) =>
-        createVideoGeneration(VIDEO_CLIPS[(round + index) % VIDEO_CLIPS.length], {
-          id: `${id}-${index}`,
-          prompt: clip.prompt,
-          model: 'fomi-cinematic',
-          seed: 2_000_000 + step * 13 + index,
-          aspectRatio: '16:9',
+          aspectRatio: entry.aspectRatio,
           createdAt,
         }),
       ),
-    });
-  }
-  return batches;
+    };
+  });
 }
 
 const HISTORY = buildHistory();

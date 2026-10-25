@@ -4,7 +4,7 @@
  */
 
 /** @typedef {'image' | 'video'} Mode */
-/** @typedef {'1:1' | '4:5' | '3:4' | '16:9' | '9:16'} AspectRatioId */
+/** @typedef {'1:1' | '4:5' | '2:3' | '3:4' | '16:9' | '9:16'} AspectRatioId */
 /** @typedef {'draft' | 'standard' | 'high'} Quality */
 
 /**
