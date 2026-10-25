@@ -1,58 +1,58 @@
-# Product Thinking — Lineage
+# Product Thinking
 
 ## 1. What problem were you trying to solve? What type of user did you design for?
 
-I designed for a professional who spends the day inside the tool: an art director or designer producing a campaign for a brand. The demo project is an autumn launch for a candle brand, three days in.
+Designers who make images all day for a client. Think a campaign for a candle brand.
 
-Their problem isn't generating one good image. It's the 300th image. After hours of iterating, the good results are buried in a feed, nobody remembers which prompt and seed produced them, and every new prompt slowly drifts away from the brief. Existing generators treat each prompt as a fresh start and show results as an infinite scroll, so the context of how you got somewhere is lost.
+The problem: after 200 images you can't find the good ones, and you forget which prompt made them. Most tools just show one long feed, so you lose track fast.
 
 ## 2. What are the three most important UX decisions you made? Why?
 
-1. **The project is a family tree, not a feed.** Every take sits in a lane (a branch of exploration), one step to the right of the take it came from. A line connects it to the exact image it grew from. You can always answer "how did I get here?" and go back to any promising direction. I laid the columns out by generation rather than by time, so the canvas stays dense instead of mostly empty.
+1. **Branches, not a feed.** Each new set of images sits next to the one it came from, with a line between them. So you can always see how you got somewhere and go back.
 
-2. **You change one ingredient, not the whole prompt.** A prompt is stored as a recipe: subject, scene, light, mood and props. Branching means picking one ingredient and giving it a new value. Everything else carries over, so every new take differs from its parent in exactly one deliberate way, and the card shows that difference ("Light: golden hour, was candlelit evening"). The project's Direction (palette, locked ingredients, things to avoid) is added to every prompt automatically, so the campaign stays consistent without retyping.
+2. **Change one thing at a time.** The prompt is split into parts: subject, scene, light, mood, props. To try something new you change one part and keep the rest. The card shows what changed, like "Light: golden hour". The brand rules get added to every prompt by themselves, so you don't type them again.
 
-3. **Deciding is as fast as generating.** Professionals spend more time choosing than creating. Arrow keys move through the canvas. P, X and C pick, reject and compare, and B branches. ⌘K reaches any action or take. Compare shows two to four images with synced zoom so you judge detail, not thumbnails. Picks collect in a Selects tray and export with their recipes, so the hand-off can be reproduced.
+3. **Fast picking.** Choosing takes longer than making. So there are shortcuts: arrows to move, P to pick, X to reject, C to compare, B to branch, ⌘K for everything else. Picks go to a tray and you can export them with their prompts.
 
 ## 3. Which features did you intentionally leave out? Why?
 
-- **A free-form node canvas** (like ComfyUI or Krea's node editor). It's powerful, but it turns image-making into wiring diagrams. Lanes give most of the benefit with a fraction of the complexity.
-- **Collaboration and comments.** They're important for agencies, but they don't serve one person's core loop: direct, generate, compare, refine, keep.
-- **Editing tools** (inpainting, masks). That's a different workspace, FOMI's Image Editing page.
-- **AI prompt rewriting.** It hides what changed, which is exactly what this workspace makes visible.
-- **Credits, billing, folders and model training.** These are real product needs, but they're noise inside the workspace.
-- **Persistence.** Out of scope for a frontend assessment; the state lives in memory.
+- **Node editor** (like ComfyUI). Too complex for most people. Lanes are simpler.
+- **Comments and sharing.** Useful for teams, but not needed to make and pick images.
+- **Editing tools** like masks. That's a different page.
+- **AI prompt rewriting.** It hides what changed, and seeing changes is the whole point.
+- **Saving to a database.** Out of scope for a frontend task. Everything resets on reload.
 
 ## 4. Which existing products inspired your thinking? What did you like? What would you improve?
 
-- **Git and Git graph tools:** branches as cheap, visible history. I borrowed the idea, not the jargon.
-- **Lightroom and Photo Mechanic:** pick and reject flags with single keys, the professional photographer's culling loop.
-- **Cursor and Figma:** ⌘K for everything; diffs that show exactly what changed; a canvas that feels like a working surface.
-- **Krea and Magnific:** calm, image-first interfaces. What I'd improve in AI generators generally: results arrive in a feed with no ancestry, settings drift between prompts, and choosing the winners happens somewhere else.
+- **Git:** branches you can see.
+- **Lightroom:** pick and reject with one key.
+- **Cursor and Figma:** ⌘K, and showing exactly what changed.
+- **Krea and Magnific:** clean, image first.
+
+What I'd improve in most AI tools: results get lost in a feed, and you can't see where a good image came from.
 
 ## 5. If you had another month, what would you improve?
 
-- Real persistence and autosave, then **undo** across branches.
-- **Merging:** combine ingredients from two branches into one take.
-- **Drift warnings:** use a vision model to flag results that ignore the Direction (wrong palette, visible text).
-- Shareable review links where a client can pick from the Selects.
-- Video takes inside the same lineage.
-- Virtualise the canvas for projects with thousands of takes.
-- Above all, put it in front of five working designers, watch where they hesitate, and cut whatever they don't use.
+- Save projects and add undo
+- Mix two branches into one
+- Warn when an image breaks the brand rules (wrong colours, text in the image)
+- Share links so a client can pick images
+- Video branches
+- Test with real designers and remove what they don't use
 
 ## 6. What is the single feature or workflow that differentiates this workspace from existing AI creative platforms?
 
-**Branching by recipe.** Select an image, change one ingredient, and the new take appears in its own lane, connected to the image it came from and labelled with exactly what changed. Every result keeps its full recipe from first take to export.
+Branching. Pick an image, change one thing, and you get a new set right next to it, with a note saying what changed. Every image keeps its full recipe till export.
 
-## 7. Design trade-offs — what was prioritized, simplified, removed, and why
+## 7. Design trade-offs: what did you prioritize, simplify and remove, and why?
 
-- **Prioritized** the core loop and keyboard speed over breadth. Every element on screen maps to direct, generate, compare, refine or keep.
-- **Simplified** the tree into lanes with fixed geometry. Cards and connectors are computed from constants instead of measured, which is easier to read and fast. The cost is less freedom than a free canvas.
-- **Simplified** generation to one branch at a time. It avoids queues and partial states, at the cost of some throughput.
-- **Removed** a separate history page in Studio, because the lineage is the history.
-- **In Part A**, I stayed close to the mockup but changed what didn't work:
-  - The Generate button's contrast failed accessibility (2.2:1), so I darkened the coral.
-  - The nav indicator follows the active tool rather than sitting on Home.
-  - The default ratio is 2:3, to match the mockup's tiles.
-  - Tablets use 4 columns, because batches come in 1, 2, 4 or 8 images and 3 columns always left one image alone on a row.
-- **Mocked** the backend with curated photo sets matched by keywords. It's not AI, but it makes the results coherent enough to judge the interface honestly.
+- **Prioritized:** the main loop (make, compare, pick) and keyboard speed.
+- **Simplified:** fixed lanes instead of a free canvas. Easier to read, less freedom.
+- **Simplified:** one branch generates at a time. No queue to manage.
+- **Removed:** a separate history page in the studio. The branches already are the history.
+- **Part A changes from the mockup:**
+  - Generate button colour made darker, the original was hard to read
+  - Nav highlight follows Image or Video
+  - Default ratio 2:3 to match the mockup images
+  - 4 columns on tablet so image sets don't leave one alone on a row
+- **Fake backend:** picks stock photos by keywords. Not real AI, but good enough to test the UI.
