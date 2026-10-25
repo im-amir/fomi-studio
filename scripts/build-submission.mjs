@@ -26,6 +26,17 @@ const inline = (text) =>
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/`(.+?)`/g, '<code>$1</code>');
 
+const IMAGE = /^!\[(.*)\]\((.+)\)$/;
+
+/**
+ * Paths in the markdown are relative to the repo root; the HTML lives in docs/submission.
+ * @param {string} line
+ */
+function imageToHtml(line) {
+  const [, alt, src] = /** @type {RegExpMatchArray} */ (line.match(IMAGE));
+  return `<figure><img src="${src.replace(/^docs\//, '../')}" alt="" /><figcaption>${escapeHtml(alt)}</figcaption></figure>`;
+}
+
 /**
  * Bullet list with one level of nesting (indented "- " lines belong to the item above).
  * @param {string[]} lines
@@ -52,7 +63,7 @@ function listToHtml(lines) {
 
 /**
  * Converts the small markdown subset PRODUCT_THINKING.md uses (headings, paragraphs,
- * bullet lists, numbered paragraphs) — enough to avoid a markdown dependency.
+ * bullet lists, numbered paragraphs, rows of images) — enough to avoid a markdown dependency.
  * @param {string} markdown
  */
 function markdownToHtml(markdown) {
@@ -62,6 +73,9 @@ function markdownToHtml(markdown) {
     .map((block) => {
       const lines = block.split('\n');
       if (block.startsWith('## ')) return `<h2>${inline(block.slice(3))}</h2>`;
+      if (lines.every((line) => IMAGE.test(line))) {
+        return `<div class="figures">${lines.map(imageToHtml).join('')}</div>`;
+      }
       if (block.startsWith('# ')) return `<h1>${inline(block.slice(2))}</h1>`;
       if (lines.every((line) => /^\s*- /.test(line))) return listToHtml(lines);
       const numbered = block.match(/^(\d+)\.\s+([\s\S]*)$/);

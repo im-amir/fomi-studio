@@ -24,12 +24,12 @@ The problem: after 200 images you can't find the good ones, and you forget which
 
 ## 4. Which existing products inspired your thinking? What did you like? What would you improve?
 
-- **Higgsfield:** images fill the screen and the prompt bar sits at the bottom. Liked that the images come first. Would improve: it's one long feed, so it's hard to tell which settings made which image.
-- **Krea:** very clean, a few chips under the prompt instead of big menus. Liked how simple it feels. Would improve: older results get lost as you keep going.
-- **Magnific and OpenArt:** settings panel on the left, results on the right. Liked that every setting is easy to find. Would improve: a lot of options on screen at once.
-- **Leonardo:** good presets and models to start from. Would improve: lots of menus to dig through.
+**Higgsfield.** I liked how easy it is to get started. You can try it right away without signing up, and it gives you 80 credits. Everything is in one simple bar: add references, use @ to add characters and locations, upload images, and pick the camera, colours and lighting. Would improve: once you have lots of results, it's hard to tell which settings made which image.
 
-Outside AI tools: branches from **Git**, pick and reject keys from **Lightroom**, ⌘K from **Cursor** and **Figma**.
+**Krea.** I liked the effects and animations. They're simple and they mean something. Scrolling through images feels natural, and the UI is very simple. Would improve: older results get lost as you keep going.
+
+![Higgsfield](docs/inspiration/higgsfield.jpg)
+![Krea](docs/inspiration/krea.jpg)
 
 ## 5. If you had another month, what would you improve?
 

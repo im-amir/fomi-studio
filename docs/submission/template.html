@@ -140,6 +140,30 @@
       .answers li ul {
         margin: 4pt 0 0;
       }
+      .answers .figures {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8pt;
+        margin: 4pt 0 10pt;
+        break-inside: avoid;
+      }
+      .answers .figures figure {
+        margin: 0;
+        min-width: 0;
+      }
+      .answers .figures img {
+        display: block;
+        width: 100%;
+        height: 120pt;
+        object-fit: cover;
+        object-position: top;
+        border-radius: 8pt;
+      }
+      .answers .figures figcaption {
+        color: var(--ink-500);
+        font-size: 8.5pt;
+        margin-top: 3pt;
+      }
       .answers .numbered {
         display: grid;
         grid-template-columns: 14pt 1fr;
