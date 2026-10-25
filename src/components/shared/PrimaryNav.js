@@ -56,7 +56,7 @@ export function PrimaryNav({ mode, onModeChange }) {
       className="relative pt-3 [--active:var(--active-sm)] [--cols:var(--cols-sm)] [--item:2.75rem] md:[--active:var(--active-md)] md:[--cols:var(--cols-md)] md:[--item:4.5rem]"
     >
       <div aria-hidden="true" className="absolute inset-x-0 top-0 h-1.5 rounded-full bg-panel">
-        <span className="absolute inset-y-0 left-0 w-[calc(100%/var(--cols))] translate-x-[calc(var(--active)*100%)] px-2 transition-transform duration-slow md:px-3">
+        <span className="absolute inset-y-0 left-0 w-[calc(100%/var(--cols))] translate-x-[calc(var(--active)*100%)] px-2 transition-[translate] duration-slow md:px-3">
           <span className="block h-full rounded-full bg-accent-500" />
         </span>
       </div>
