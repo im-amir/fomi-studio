@@ -37,6 +37,13 @@
   --color-success: #2f6b4f;
   --color-scrim: rgb(42 36 32 / 0.56);
 
+  /* Studio lanes — one hue per branch; used for lines and dots, ≥3:1 on canvas. */
+  --color-lane-1: #b9502e;
+  --color-lane-2: #8a4f6d;
+  --color-lane-3: #5f7a54;
+  --color-lane-4: #a5701a;
+  --color-lane-5: #4f6b80;
+
   /* Type */
   --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
@@ -124,6 +131,11 @@
   --color-danger: #f2877a;
   --color-danger-soft: #3a1f1a;
   --color-success: #7cc4a0;
+  --color-lane-1: #e07f5c;
+  --color-lane-2: #c48aa8;
+  --color-lane-3: #9cb58f;
+  --color-lane-4: #d9a24e;
+  --color-lane-5: #8fb0c6;
   --color-on-accent: #1a1613;
   --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.3);
   --shadow-md: 0 4px 16px -4px rgb(0 0 0 / 0.5);

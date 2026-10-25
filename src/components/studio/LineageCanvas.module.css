@@ -1,0 +1,31 @@
+/* A faint dot grid: reads as a working surface (like a cutting mat), not a page. */
+.surface {
+  background-color: var(--color-canvas);
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    color-mix(in srgb, var(--color-ink-500) 22%, transparent) 1px,
+    transparent 0
+  );
+  background-size: 24px 24px;
+}
+
+/* Lane names stay readable while cards scroll underneath. */
+.laneHeader {
+  background: linear-gradient(
+    to right,
+    var(--color-canvas) 78%,
+    color-mix(in srgb, var(--color-canvas) 0%, transparent)
+  );
+}
+
+.connector {
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.trunk {
+  stroke-dasharray: 2 6;
+  opacity: 0.6;
+}
