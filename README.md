@@ -28,6 +28,8 @@ Two parts of an AI creative platform, built with Next.js, JavaScript, Tailwind C
 - Include the word **“fail”** in a prompt to see the error state (the prompt is kept, retry is one click).
 - Hover a result for quick actions; click it for the full-size viewer (**← →**, **Esc**).
 - Use the history strip or **History · View all** (paginated) to bring past runs back onto the canvas.
+- Collapse the settings panel (button next to Image/Video, or **⌘/Ctrl + \\**) to give the results the full width.
+- Prompts need at least 3 words; Generate tells you how many are missing. Styles can be combined.
 - Hide both batches (eye icon on a prompt card) to see the empty state. Toggle the theme in the top bar.
 
 **Part B (`/studio`)**
