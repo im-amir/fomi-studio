@@ -12,6 +12,7 @@ export const COMPARE_LIMIT = 4;
  * @property {Take} take              items empty until the results arrive
  * @property {Branch | null} newBranch
  * @property {ApiError | null} error
+ * @property {number} startedAt      epoch ms, for the progress estimate
  */
 
 /**
