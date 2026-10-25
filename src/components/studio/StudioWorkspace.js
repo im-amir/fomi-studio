@@ -7,10 +7,12 @@ import { TopBar } from '@/components/shared/TopBar';
 import { ToastProvider, useToast } from '@/components/ui/Toaster';
 import { useHotkeys } from '@/hooks/useHotkeys';
 import { downloadGeneration } from '@/lib/download';
+import { buildHandoff, downloadJson } from '@/lib/studio/export';
 import { layoutLineage } from '@/lib/studio/layout';
 import { neighbourImage } from '@/lib/studio/navigation';
 import { BRANCH_INPUT_ID, BranchComposer } from './BranchComposer';
 import { DirectionBar } from './DirectionBar';
+import { SelectsTray } from './SelectsTray';
 import { Inspector } from './Inspector';
 import { LineageCanvas } from './LineageCanvas';
 import { StudioHeader } from './StudioHeader';
@@ -51,6 +53,16 @@ function Studio({ project }) {
     [view.takes],
   );
   const allItems = useMemo(() => view.takes.flatMap((take) => take.items), [view.takes]);
+
+  const pickedItems = useMemo(
+    () => [...state.picks].flatMap((pickId) => allItems.find((item) => item.id === pickId) ?? []),
+    [state.picks, allItems],
+  );
+
+  const exportSelects = () => {
+    downloadJson(buildHandoff(view, [...state.picks], takeLabel), 'hearth-autumn-selects.json');
+    toast(`Exported ${state.picks.size} selects with their recipes`, { tone: 'success' });
+  };
 
   const select = useCallback(
     /** @param {string} id */ (id) => dispatch({ type: 'select', id }),
@@ -100,7 +112,7 @@ function Studio({ project }) {
       <DirectionBar direction={view.direction} />
 
       <div className="grid min-h-0 flex-1 gap-4 lg:grid-cols-[minmax(0,1fr)_22rem]">
-        <main aria-label="Project lineage" className="min-h-0">
+        <main aria-label="Project lineage" className="flex min-h-0 min-w-0 flex-col gap-3">
           <LineageCanvas
             project={view}
             layout={layout}
@@ -113,7 +125,14 @@ function Studio({ project }) {
             pending={state.pending}
             onRetryPending={branching.retry}
             onCancelPending={branching.cancel}
-            className="h-full max-lg:h-[70dvh]"
+            className="min-h-0 flex-1 max-lg:h-[70dvh] max-lg:flex-none"
+          />
+          <SelectsTray
+            items={pickedItems}
+            selectedImageId={state.selectedImageId}
+            onSelect={select}
+            onUnpick={(imageId) => dispatch({ type: 'togglePick', id: imageId })}
+            onExport={exportSelects}
           />
         </main>
 
