@@ -1,4 +1,5 @@
 import { GenerateWorkspace } from '@/components/generate/GenerateWorkspace';
+import { getExamplePrompts } from '@/lib/mock/examples';
 import { getHistoryPage } from '@/lib/mock/history';
 
 export const metadata = { title: 'Create' };
@@ -11,5 +12,5 @@ export default function CreatePage() {
     items: [],
     nextCursor: null,
   };
-  return <GenerateWorkspace initialHistory={initialHistory} />;
+  return <GenerateWorkspace initialHistory={initialHistory} examples={getExamplePrompts()} />;
 }

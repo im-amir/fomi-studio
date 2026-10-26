@@ -5,7 +5,7 @@ import { EmptyState } from './EmptyState';
 import { ErrorRow } from './ErrorRow';
 import { PendingRow } from './PendingRow';
 
-/** @import { Batch, Generation } from '@/lib/types' */
+/** @import { Batch, ExamplePrompt, Generation } from '@/lib/types' */
 /** @import { GenerateState } from '@/hooks/useGenerate' */
 /** @import { TileAction } from '@/components/shared/MediaTile' */
 
@@ -25,7 +25,8 @@ import { PendingRow } from './PendingRow';
  *   onRetry: () => void,
  *   onDismissError: () => void,
  *   onPickPrompt: (prompt: string) => void,
- *   emptyComposer?: React.ReactNode,
+ *   examples: ExamplePrompt[],
+ *   emptyComposer: React.ReactNode,
  * }} props
  */
 export function BatchFeed({
@@ -42,10 +43,11 @@ export function BatchFeed({
   onRetry,
   onDismissError,
   onPickPrompt,
+  examples,
   emptyComposer,
 }) {
   if (batches.length === 0 && generation.status === 'idle') {
-    return <EmptyState onPickPrompt={onPickPrompt} composer={emptyComposer} />;
+    return <EmptyState examples={examples} onPickPrompt={onPickPrompt} composer={emptyComposer} />;
   }
 
   return (

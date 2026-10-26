@@ -95,19 +95,60 @@ export const IMAGE_PROMPT_SETS = [
   },
 ];
 
-/** Prompts offered as one-click starters in the empty state. */
+/**
+ * One-click starters for the empty state, shown as picture cards. Each prompt matches its
+ * `set` by keyword, so generating it returns the kind of image on the card.
+ * `photo` indexes into the set; it avoids the frames the history strip already shows.
+ * @type {{ label: string, prompt: string, set: string, photo: number }[]}
+ */
 export const EXAMPLE_PROMPTS = [
   {
     label: 'Gallery portrait',
     prompt:
       'Editorial portrait of a redheaded woman in a cream sweater, soft gallery light, muted beige background',
+    set: 'portrait',
+    photo: 2,
   },
   {
     label: 'Neon street',
     prompt: 'Rain-soaked neon street at night, reflections in puddles, magenta and teal',
+    set: 'neon',
+    photo: 2,
   },
   {
     label: 'Alpine dawn',
     prompt: 'Snow-capped alpine peaks at first light, thin clouds in the valleys, 50mm',
+    set: 'mountains',
+    photo: 2,
+  },
+  {
+    label: 'Window cat',
+    prompt: 'A curious cat by a sunny window, bright eyes, shallow depth of field',
+    set: 'cats',
+    photo: 2,
+  },
+  {
+    label: 'Misty pines',
+    prompt: 'A misty pine forest at dawn, fog drifting between the trees, muted greens',
+    set: 'forest',
+    photo: 2,
+  },
+  {
+    label: 'Paris at dusk',
+    prompt: 'The Eiffel Tower at dusk under a pastel pink sky, dreamy travel-poster mood',
+    set: 'paris',
+    photo: 2,
+  },
+  {
+    label: 'Candle still life',
+    prompt: 'A soy candle in an amber glass jar on an oak table, warm low light',
+    set: 'candles',
+    photo: 2,
+  },
+  {
+    label: 'Cosy mug',
+    prompt: 'A ceramic mug of cocoa on a wool blanket, soft morning light',
+    set: 'mugs',
+    photo: 2,
   },
 ];

@@ -27,7 +27,7 @@ import { SlidersHorizontal } from 'lucide-react';
 import { IconButton } from '@/components/ui/IconButton';
 import { useWorkspaceActions } from './useWorkspaceActions';
 
-/** @import { HistoryPage } from '@/lib/types' */
+/** @import { ExamplePrompt, HistoryPage } from '@/lib/types' */
 
 const loadLightbox = () => import('@/components/shared/MediaLightbox');
 const MediaLightbox = dynamic(loadLightbox);
@@ -38,7 +38,7 @@ const SettingsSheet = dynamic(() => import('./SettingsSheet'));
  * Part A: the generation workspace from the FOMI mockup.
  * Desktop is an app shell — top bar and history strip stay put, the settings panel stays
  * in reach, and only the results scroll (under the strip, as in the mockup).
- * @param {{ initialHistory: HistoryPage }} props
+ * @param {{ initialHistory: HistoryPage, examples: ExamplePrompt[] }} props
  */
 export function GenerateWorkspace(props) {
   return (
@@ -48,8 +48,8 @@ export function GenerateWorkspace(props) {
   );
 }
 
-/** @param {{ initialHistory: HistoryPage }} props */
-function Workspace({ initialHistory }) {
+/** @param {{ initialHistory: HistoryPage, examples: ExamplePrompt[] }} props */
+function Workspace({ initialHistory, examples }) {
   const composer = useComposerSettings();
   const history = useHistory(initialHistory);
   // The main area is for this session's work; past runs live in the history strip
@@ -183,6 +183,7 @@ function Workspace({ initialHistory }) {
               onRetry={actions.retry}
               onDismissError={actions.dismissError}
               onPickPrompt={actions.pickPrompt}
+              examples={examples}
               emptyComposer={
                 composerInCentre && (
                   <PromptComposer

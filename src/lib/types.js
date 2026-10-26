@@ -70,4 +70,13 @@
  * @property {{ code: string, message: string, field?: string }} error
  */
 
+/**
+ * An empty-state starter: a prompt plus a picture of what it makes.
+ * @typedef {object} ExamplePrompt
+ * @property {string} label
+ * @property {string} prompt
+ * @property {string} src
+ * @property {string} [blurDataURL]
+ */
+
 export {};
