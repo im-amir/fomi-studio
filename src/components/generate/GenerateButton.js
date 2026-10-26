@@ -10,8 +10,6 @@ import { cn } from '@/lib/format';
 
 /** @typedef {'ready' | 'incomplete' | 'generating' | 'done'} GenerateButtonState */
 
-const COMPACT_CLASS = 'size-10 shrink-0 rounded-full px-0';
-
 /**
  * The primary action. While generating it becomes Cancel (same place, same size) so
  * stopping is never a hunt; a brief tick confirms success. `compact` is the icon-only
@@ -38,11 +36,11 @@ export function GenerateButton({
   if (state === 'generating') {
     return (
       <Button
-        size={compact ? 'md' : 'lg'}
+        size={compact ? 'round' : 'lg'}
         variant="secondary"
         aria-label={compact ? 'Cancel generation' : undefined}
         onClick={onCancel}
-        className={cn('group/cancel', compact ? COMPACT_CLASS : 'min-w-34')}
+        className={cn('group/cancel', !compact && 'min-w-34')}
         icon={
           <span className="relative inline-flex size-4 items-center justify-center">
             <Spinner className="text-accent-600 transition-opacity duration-fast group-hover/cancel:opacity-0" />
@@ -69,12 +67,12 @@ export function GenerateButton({
   return (
     <Tooltip content={hint} id={hintId}>
       <Button
-        size={compact ? 'md' : 'lg'}
+        size={compact ? 'round' : 'lg'}
         disabled={state === 'incomplete'}
         aria-label={compact ? 'Generate' : undefined}
         aria-describedby={hintId}
         onClick={onGenerate}
-        className={compact ? COMPACT_CLASS : 'min-w-34'}
+        className={compact ? undefined : 'min-w-34'}
         icon={state === 'done' ? <Check className="size-4 animate-pop-in" /> : idleIcon}
       >
         {!compact && (state === 'done' ? 'Done' : 'Generate')}

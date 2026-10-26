@@ -22,6 +22,8 @@ const SIZES = {
   sm: 'h-8 gap-1.5 rounded-control px-3 text-sm',
   md: 'h-10 gap-2 rounded-control px-4 text-base',
   lg: 'h-11 gap-2 rounded-full px-5 text-md',
+  // Icon-only circle. Its own size rather than overriding padding, which loses to px-*.
+  round: 'size-10 rounded-full',
 };
 
 /**
