@@ -1,6 +1,6 @@
 'use client';
 
-import { Image as ImageIcon, PanelLeftClose, PanelLeftOpen, Video } from 'lucide-react';
+import { Image as ImageIcon, Lightbulb, PanelLeftClose, PanelLeftOpen, Video } from 'lucide-react';
 import { IconButton } from '@/components/ui/IconButton';
 import { Segmented } from '@/components/ui/Segmented';
 import { MODES, PROMPT_MIN_WORDS } from '@/lib/constants';
@@ -31,6 +31,7 @@ export const MODE_OPTIONS = MODES.map((mode) => ({ ...mode, icon: MODE_ICONS[mod
  *   buttonState: GenerateButtonState,
  *   onGenerate: () => void,
  *   onCancel: () => void,
+ *   onOpenIdeas: () => void,
  *   collapsed: boolean,
  *   onCollapsedChange: (collapsed: boolean) => void,
  *   showComposer: boolean,
@@ -43,6 +44,7 @@ export function ControlPanel({
   buttonState,
   onGenerate,
   onCancel,
+  onOpenIdeas,
   collapsed,
   onCollapsedChange,
   showComposer,
@@ -91,6 +93,11 @@ export function ControlPanel({
               onGenerate={onGenerate}
               onCancel={onCancel}
               autoFocus={autoFocusPrompt}
+              footerStart={
+                <IconButton label="Ideas" size="sm" onClick={onOpenIdeas}>
+                  <Lightbulb />
+                </IconButton>
+              }
             />
           )}
         </div>

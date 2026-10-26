@@ -33,6 +33,7 @@ const loadLightbox = () => import('@/components/shared/MediaLightbox');
 const MediaLightbox = dynamic(loadLightbox);
 const HistoryDialog = dynamic(() => import('./HistoryDialog'));
 const SettingsSheet = dynamic(() => import('./SettingsSheet'));
+const IdeasDialog = dynamic(() => import('./IdeasDialog'));
 
 /**
  * Part A: the generation workspace from the FOMI mockup.
@@ -58,6 +59,7 @@ function Workspace({ initialHistory, examples }) {
   const [viewerItemId, setViewerItemId] = useState(/** @type {string | null} */ (null));
   const [historyOpen, setHistoryOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [ideasOpen, setIdeasOpen] = useState(false);
   // Desktop only: fold the settings panel to a rail so the results get the width.
   const [panelCollapsed, setPanelCollapsed] = useState(false);
   // After the prompt has moved once (centre ↔ panel), each new mount takes focus so you
@@ -75,14 +77,14 @@ function Workspace({ initialHistory, examples }) {
     feed,
     history,
     feedRef,
-    overlayOpen: viewerItemId !== null || historyOpen || settingsOpen,
+    overlayOpen: viewerItemId !== null || historyOpen || settingsOpen || ideasOpen,
     showComposer: () => setPanelCollapsed(false),
     onComposerMove: () => setComposerMoved(true),
   });
 
   useHotkeys(
     { 'mod+\\': () => setPanelCollapsed((collapsed) => !collapsed) },
-    { enabled: viewerItemId === null && !historyOpen && !settingsOpen },
+    { enabled: viewerItemId === null && !historyOpen && !settingsOpen && !ideasOpen },
   );
 
   // Empty canvas: the prompt is the hero, so it sits in the centre. Once there's work on the
@@ -151,6 +153,7 @@ function Workspace({ initialHistory, examples }) {
             buttonState={actions.buttonState}
             onGenerate={actions.generateFromComposer}
             onCancel={actions.cancel}
+            onOpenIdeas={() => setIdeasOpen(true)}
             collapsed={panelCollapsed}
             showComposer={!composerInCentre && !isPhone}
             autoFocusPrompt={followFocus}
@@ -221,6 +224,7 @@ function Workspace({ initialHistory, examples }) {
           onGenerate={actions.generateFromComposer}
           onCancel={actions.cancel}
           onOpenSettings={() => setSettingsOpen(true)}
+          onOpenIdeas={() => setIdeasOpen(true)}
         />
       )}
 
@@ -246,6 +250,15 @@ function Workspace({ initialHistory, examples }) {
       <Suspense fallback={null}>
         {settingsOpen && (
           <SettingsSheet composer={composer} onClose={() => setSettingsOpen(false)} />
+        )}
+      </Suspense>
+      <Suspense fallback={null}>
+        {ideasOpen && (
+          <IdeasDialog
+            examples={examples}
+            onPick={actions.pickPrompt}
+            onClose={() => setIdeasOpen(false)}
+          />
         )}
       </Suspense>
       <Suspense fallback={null}>

@@ -1,7 +1,7 @@
 'use client';
 
 import { ViewTransition } from 'react';
-import { SlidersHorizontal } from 'lucide-react';
+import { Lightbulb, SlidersHorizontal } from 'lucide-react';
 import { IconButton } from '@/components/ui/IconButton';
 import { getModel } from '@/data/models';
 import { PROMPT_MIN_WORDS } from '@/lib/constants';
@@ -37,9 +37,17 @@ export function settingsSummary(settings) {
  *   onGenerate: () => void,
  *   onCancel: () => void,
  *   onOpenSettings: () => void,
+ *   onOpenIdeas: () => void,
  * }} props
  */
-export function PromptDock({ composer, buttonState, onGenerate, onCancel, onOpenSettings }) {
+export function PromptDock({
+  composer,
+  buttonState,
+  onGenerate,
+  onCancel,
+  onOpenSettings,
+  onOpenIdeas,
+}) {
   const { settings, setPrompt } = composer;
   const summary = settingsSummary(settings);
 
@@ -53,6 +61,9 @@ export function PromptDock({ composer, buttonState, onGenerate, onCancel, onOpen
         <div className="flex items-end gap-1.5 rounded-panel border-[1.5px] border-ink-900 bg-surface p-1 transition-[border-color,box-shadow] duration-fast focus-within:border-accent-600 focus-within:shadow-[0_0_0_3px_var(--color-accent-100)]">
           <IconButton label={`Settings: ${summary}`} tooltip={false} onClick={onOpenSettings}>
             <SlidersHorizontal />
+          </IconButton>
+          <IconButton label="Ideas" tooltip={false} onClick={onOpenIdeas} className="-ml-1.5">
+            <Lightbulb />
           </IconButton>
           <PromptTextarea
             id="prompt-dock"
