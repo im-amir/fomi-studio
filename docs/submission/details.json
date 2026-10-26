@@ -1,9 +1,9 @@
 {
   "name": "Muhammad Amir",
-  "role": "Frontend Developer \u2014 Technical Assessment",
+  "role": "Frontend Developer — Technical Assessment",
   "email": "",
   "phone": "",
-  "liveUrl": "",
-  "studioUrl": "",
+  "liveUrl": "https://fomi-studio-three.vercel.app",
+  "studioUrl": "https://fomi-studio-three.vercel.app/studio",
   "repoUrl": "https://github.com/im-amir/fomi-studio"
 }

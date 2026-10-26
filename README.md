@@ -7,10 +7,12 @@ Two parts of an AI creative platform, built with Next.js, JavaScript, Tailwind C
 
 |                  | Link                                         |
 | ---------------- | -------------------------------------------- |
-| Live (Vercel)    | _added after deployment_                     |
-| Repository       | _added after deployment_                     |
+| Part A (live)    | https://fomi-studio-three.vercel.app         |
+| Part B (live)    | https://fomi-studio-three.vercel.app/studio  |
+| Repository       | https://github.com/im-amir/fomi-studio       |
 | Product thinking | [PRODUCT_THINKING.md](./PRODUCT_THINKING.md) |
 
+![Part A on an empty canvas](docs/screenshots/part-a-empty.jpg)
 ![Part A on desktop](docs/screenshots/part-a-desktop.jpg)
 ![Part B — Lineage studio](docs/screenshots/studio-desktop.jpg)
 
@@ -30,7 +32,7 @@ Two parts of an AI creative platform, built with Next.js, JavaScript, Tailwind C
 - Use the history strip or **History · View all** (paginated) to bring past runs back onto the canvas.
 - Collapse the settings panel (button next to Image/Video, or **⌘/Ctrl + \\**) to give the results the full width.
 - Prompts need at least 3 words; Generate tells you how many are missing. Styles can be combined.
-- The page opens with the prompt in the middle of an empty canvas, with picture examples under it (click one to fill the prompt). After that, the lightbulb in the prompt brings them back. Your first Generate moves it into the side panel (the mockup layout) as results take the centre. On a phone it moves into the bottom bar instead. Past runs live in the history strip and open in the main area when you click them. Toggle the theme in the top bar.
+- The page opens with the prompt in the middle of an empty canvas, with picture examples under it (click one to fill the prompt). Your first Generate moves the prompt into the side panel (the mockup layout) as results take the centre; on a phone it moves into the bottom bar. After that, the lightbulb in the prompt brings the examples back. Past runs live in the history strip and open in the main area when you click them. Toggle the theme in the top bar.
 
 **Part B (`/studio`)**
 
