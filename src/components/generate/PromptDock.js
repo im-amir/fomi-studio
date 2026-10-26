@@ -56,17 +56,25 @@ export function PromptDock({
       aria-label="Prompt"
       className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-canvas/95 px-3 pt-2 pb-[max(env(safe-area-inset-bottom),0.75rem)] backdrop-blur-md md:hidden"
     >
-      <p aria-hidden="true" className="mb-1.5 px-1 text-2xs text-ink-500">
-        {summary}
-      </p>
+      <div className="mb-1 flex items-center justify-between gap-2 pl-1">
+        <p aria-hidden="true" className="truncate text-2xs text-ink-500">
+          {summary}
+        </p>
+        {/* Up here rather than beside the field, so the prompt keeps its width. */}
+        <button
+          type="button"
+          onClick={onOpenIdeas}
+          className="flex h-7 shrink-0 items-center gap-1 rounded-chip px-2 text-xs font-medium text-ink-600 focus-ring transition-colors duration-fast active:bg-panel-strong"
+        >
+          <Lightbulb aria-hidden="true" className="size-3.5" />
+          Ideas
+        </button>
+      </div>
       {/* Shares the composer's name so the centred prompt morphs into the dock. */}
       <ViewTransition name="prompt-composer" share="morph" default="none">
         <div className="flex items-end gap-1.5 rounded-panel border-[1.5px] border-ink-900 bg-surface p-1 transition-[border-color,box-shadow] duration-fast focus-within:border-accent-600 focus-within:shadow-[0_0_0_3px_var(--color-accent-100)]">
           <IconButton label={`Settings: ${summary}`} tooltip={false} onClick={onOpenSettings}>
             <SlidersHorizontal />
-          </IconButton>
-          <IconButton label="Ideas" tooltip={false} onClick={onOpenIdeas} className="-ml-1.5">
-            <Lightbulb />
           </IconButton>
           <PromptTextarea
             id="prompt-dock"
