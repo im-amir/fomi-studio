@@ -30,7 +30,7 @@ Two parts of an AI creative platform, built with Next.js, JavaScript, Tailwind C
 - Use the history strip or **History · View all** (paginated) to bring past runs back onto the canvas.
 - Collapse the settings panel (button next to Image/Video, or **⌘/Ctrl + \\**) to give the results the full width.
 - Prompts need at least 3 words; Generate tells you how many are missing. Styles can be combined.
-- The page opens with the prompt in the middle of an empty canvas. Your first Generate moves it into the side panel (the mockup layout) as results take the centre. On a phone it moves into the bottom bar instead. Past runs live in the history strip and open in the main area when you click them. Toggle the theme in the top bar.
+- The page opens with the prompt in the middle of an empty canvas, with picture examples under it (click one to fill the prompt). Your first Generate moves it into the side panel (the mockup layout) as results take the centre. On a phone it moves into the bottom bar instead. Past runs live in the history strip and open in the main area when you click them. Toggle the theme in the top bar.
 
 **Part B (`/studio`)**
 
