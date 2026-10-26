@@ -23,10 +23,15 @@ export function StudioHeader({ project, onOpenCommands, onOpenShortcuts }) {
   ];
 
   return (
-    <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-1">
+    <section
+      aria-labelledby="project-title"
+      className="flex flex-wrap items-end justify-between gap-x-6 gap-y-1"
+    >
       <div>
         <p className="text-sm text-ink-500">{project.client}</p>
-        <h1 className="font-display text-xl text-ink-900">{project.name}</h1>
+        <h1 id="project-title" className="font-display text-xl text-ink-900">
+          {project.name}
+        </h1>
       </div>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
         <p className="text-sm text-ink-500 tabular-nums">{stats.join(' · ')}</p>
@@ -51,6 +56,6 @@ export function StudioHeader({ project, onOpenCommands, onOpenShortcuts }) {
           </Button>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

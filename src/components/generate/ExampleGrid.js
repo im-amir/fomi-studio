@@ -1,6 +1,5 @@
 'use client';
 
-import { useId } from 'react';
 import Image from 'next/image';
 import { ArrowUpRight } from 'lucide-react';
 import { cn } from '@/lib/format';
@@ -20,18 +19,14 @@ import { cn } from '@/lib/format';
  * }} props
  */
 export function ExampleGrid({ examples, onPick, eager = false, className }) {
-  const id = useId();
-
   return (
     <ul className={cn('grid grid-cols-2 gap-3 md:grid-cols-4', className)}>
       {examples.map((example, index) => (
         <li key={example.label}>
           <button
             type="button"
-            aria-label={`Use prompt: ${example.label}`}
-            aria-describedby={`${id}-${index}`}
             onClick={() => onPick(example.prompt)}
-            className="group relative block aspect-[4/5] w-full overflow-hidden rounded-panel bg-panel text-left shadow-sm focus-ring"
+            className="group relative block aspect-[4/5] w-full overflow-hidden rounded-panel bg-panel text-left shadow-sm focus-ring transition-[scale] duration-fast active:scale-[0.98]"
           >
             <Image
               src={example.src}
@@ -55,10 +50,7 @@ export function ExampleGrid({ examples, onPick, eager = false, className }) {
                   className="size-4 shrink-0 opacity-70 transition-[opacity,translate] duration-fast group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100"
                 />
               </span>
-              <span
-                id={`${id}-${index}`}
-                className="line-clamp-2 text-xs text-white/80 max-sm:hidden"
-              >
+              <span className="line-clamp-2 text-xs text-white/80 max-sm:hidden">
                 {example.prompt}
               </span>
             </span>

@@ -52,7 +52,10 @@ export function PromptDock({
   const summary = settingsSummary(settings);
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-canvas/95 px-3 pt-2 pb-[max(env(safe-area-inset-bottom),0.75rem)] backdrop-blur-md md:hidden">
+    <section
+      aria-label="Prompt"
+      className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-canvas/95 px-3 pt-2 pb-[max(env(safe-area-inset-bottom),0.75rem)] backdrop-blur-md md:hidden"
+    >
       <p aria-hidden="true" className="mb-1.5 px-1 text-2xs text-ink-500">
         {summary}
       </p>
@@ -85,6 +88,6 @@ export function PromptDock({
           />
         </div>
       </ViewTransition>
-    </div>
+    </section>
   );
 }
