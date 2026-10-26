@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import { IntentLink } from '@/components/shared/IntentLink';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/format';
 
@@ -33,7 +33,7 @@ export function PartSwitcher({ placement }) {
       {PARTS.map((part) => {
         const current = part.href === pathname;
         return (
-          <Link
+          <IntentLink
             key={part.href}
             href={part.href}
             aria-current={current ? 'page' : undefined}
@@ -43,7 +43,7 @@ export function PartSwitcher({ placement }) {
             )}
           >
             {part.label}
-          </Link>
+          </IntentLink>
         );
       })}
     </nav>

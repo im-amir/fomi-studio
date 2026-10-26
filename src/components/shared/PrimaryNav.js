@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import { IntentLink } from './IntentLink';
 import { Folder, House, Image as ImageIcon, Video, WandSparkles } from 'lucide-react';
 import { Tooltip } from '@/components/ui/Tooltip';
 import { cn } from '@/lib/format';
@@ -72,7 +72,7 @@ export function PrimaryNav({ activeId, onModeChange }) {
             >
               <Tooltip content={item.label} side="bottom">
                 {item.kind === 'link' || (item.kind === 'mode' && !onModeChange) ? (
-                  <Link
+                  <IntentLink
                     href={item.kind === 'link' ? item.href : '/'}
                     aria-label={item.label}
                     aria-current={active ? 'page' : undefined}
@@ -82,7 +82,7 @@ export function PrimaryNav({ activeId, onModeChange }) {
                     )}
                   >
                     {item.icon}
-                  </Link>
+                  </IntentLink>
                 ) : (
                   <button
                     type="button"
